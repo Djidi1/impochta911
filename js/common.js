@@ -70,7 +70,7 @@ function check_user(obj){
     clearTimeout(timer_check_user);
     var elem_type = $(obj).attr('name');
     timer_check_user=setTimeout(function send_req_check_user(){
-        var obj = $('input[name='+elem_type+']');
+        var obj = $('input[name='+elem_type+']:visible');
         var user_id = $('#user_id').val();
         var elem_val = $(obj).val();
         $.post("/admin/checkUser-1/", {user_id:user_id,elem_type:elem_type,value:elem_val},  function(data) {

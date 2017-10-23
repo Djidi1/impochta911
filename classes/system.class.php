@@ -410,7 +410,7 @@ class archiveStruct {
 
 function sendMail($subject, $message, $to, $from, $ContentType = 'text/html') {
 	$headers = 'Content-type: '.$ContentType.'; charset=utf-8;'.rn
-	.'From: pochta911.ru <office@pochta911.ru>'."\r\n";
+	.'From: im.pochta911.ru <office@im.pochta911.ru>'."\r\n";
 
 	return @mail($to,$subject,$message, $headers);
 }

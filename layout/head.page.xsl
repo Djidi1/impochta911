@@ -69,17 +69,21 @@
 						<div class="boxIndent">
 							<div class="wrapper">
 								<p class="alert alert-info">Для регистрации на сайте заполните, пожалуйста, представленную форму и мы вышлем СМС с кодом подтверждения для доступа ко всем функциям сайта.</p>
-								<p id="form-login-name">
-									<label for="modlgn-name">Ваше имя</label>
-									<input id="modlgn-name" type="text" name="name" class="form-control" size="18" value="" onblur="" onfocus=""/>
+								<p>
+									<label for="mod-reg-name">Ваше имя</label>
+									<input id="mod-reg-name" type="text" name="name" class="form-control" size="18" value="" onblur="" onfocus="" required=""/>
 								</p>
-								<p id="form-login-phone">
-									<label for="modlgn-phone">Номер мобильного телефона</label>
-									<input id="modlgn-phone" type="text" name="phone" class="form-control phone-number" maxlength="11"/>
+								<p>
+									<label for="mod-reg-login">Логин <small class="text-muted">имя для входа в систему</small></label>
+									<input id="mod-reg-login" type="text" name="login" class="form-control login" onkeyup="check_user(this)" required=""/>
 								</p>
-								<p id="form-login-desc">
-									<label for="modlgn-desc">Что панируете доставлять с нашей помощью</label>
-									<input id="modlgn-desc" type="text" name="desc" class="form-control" maxlength="11"  placeholder="Доставка почты, цветов, подарков, документов..."/>
+								<p>
+									<label for="mod-reg-phone">Номер мобильного телефона</label>
+									<input id="mod-reg-phone" type="text" name="phone" class="form-control phone-number" maxlength="11" required=""/>
+								</p>
+								<p>
+									<label for="mod-reg-desc">Что панируете доставлять с нашей помощью</label>
+									<input id="mod-reg-desc" type="text" name="desc" class="form-control" maxlength="11"  placeholder="Доставка почты, цветов, подарков, документов..."/>
 								</p>
 								<div class="wrapper">
 									<div class="create" style="text-align: right">
@@ -93,12 +97,23 @@
 				</form>
 				<script>
 					function reg_form_submit(obj) {
-						bootbox.hideAll()
+						var allright = true;
 						var $form = $(obj).closest('form');
-						var formData = $form.serialize();
-						$.post($form.attr("action"), formData, function(data) {
-							bootbox.alert(data, function(){ showThem('login_pop'); });
+						// Check if empty of not
+						$($form).find( ':input[required]:visible' ).each(function () {
+							if ($(this).val() === '') {
+								$(this).focus();
+								allright = false;
+								return false;
+							}
 						});
+						if (allright){
+							bootbox.hideAll()
+							var formData = $form.serialize();
+							$.post($form.attr("action"), formData, function(data) {
+								bootbox.alert(data, function(){ showThem('login_pop'); });
+							});
+						}
 						return false;
 					};
 				</script>
@@ -129,7 +144,7 @@
 									</p>
 								</xsl:if>
 								<p id="form-login-username">
-									<label for="modlgn-username">Логин <span class="text-muted">(номер телефона)</span></label>
+									<label for="modlgn-username">Логин</label>
 									<input id="modlgn-username" type="text" name="username" class="form-control" size="18" value=""/>
 								</p>
 								<p id="form-login-password">

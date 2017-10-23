@@ -100,9 +100,14 @@
                                     <tr>
                                         <td>Пароль:</td>
                                         <td>
-                                            <span class="btn btn-sm btn-info" onclick="$(this).hide();$('#pass').show();$('#pass').focus()">Сменить пароль</span>
                                             <input style="display:none" type="password" name="fakepasswordremembered"/>
-                                            <input style="display:none" class="form-control" type="password" name="pass" id="pass" autocomplete="new-password"/>
+                                            <xsl:if test="@add_data != 2">
+                                                <span class="btn btn-sm btn-info" onclick="$(this).hide();$('#pass').show();$('#pass').focus()">Сменить пароль</span>
+                                                <input style="display:none" class="form-control" type="password" name="pass" id="pass" autocomplete="new-password"/>
+                                            </xsl:if>
+                                            <xsl:if test="@add_data = 2">
+                                                <input class="form-control" type="password" name="pass" id="pass" autocomplete="new-password" required=""/>
+                                            </xsl:if>
                                         </td>
                                     </tr>
                                     <tr>

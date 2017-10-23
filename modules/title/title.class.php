@@ -42,10 +42,10 @@ class titleModel extends module_model {
         return $this->get_assoc_array($sql);
     }
 
-    public function createUser($name, $phone, $desc, $pin_code, $sms_id){
+    public function createUser($name, $phone, $login, $desc, $pin_code, $sms_id){
         $passi = md5($pin_code);
         $sql = "INSERT INTO users (name, email, login, pass, date_reg, isban, prior, title, phone, phone_mess, fixprice_inside, inkass_proc, pay_type, sms_id, `desc`, psw_chgd) 
-                VALUES ('$name','','$phone','$passi',NOW(),'0','0','','$phone','','','','','$sms_id','$desc', 1)";
+                VALUES ('$name','','$login','$passi',NOW(),'0','0','','$phone','','','','','$sms_id','$desc', 1)";
         $test = $this->query($sql);
         if ($test) {
             $user_id = $this->insertID();
@@ -125,6 +125,7 @@ class titleProcess extends module_process {
         /********************************************************************************/
         if ($action == 'register'){
             $name = $this->Vals->getVal ( 'name', 'POST', 'string' );
+            $login = $this->Vals->getVal ( 'login', 'POST', 'string' );
             $phone = $this->Vals->getVal ( 'phone', 'POST', 'string' );
             $desc = $this->Vals->getVal ( 'desc', 'POST', 'string' );
             $phone_user = $this->nModel->formatPhoneNumber($phone);
@@ -137,7 +138,7 @@ class titleProcess extends module_process {
                 if (!$sms_id) {
                     echo "<div class='alert alert-danger'>Ошибка отправки СМС.</div>";
                 } else {
-                    $user_id = $this->nModel->createUser($name, $phone_user, $desc, $pin_code, $sms_id);
+                    $user_id = $this->nModel->createUser($name, $phone_user, $login, $desc, $pin_code, $sms_id);
                     if ($user_id > 0) {
                         echo "<div class='alert alert-success'>$name, спасибо за регистрацию.<br>Временный пароль для входа отправлен на номер: $phone </div><!-- $pin_code -->";
                     }else {
@@ -193,7 +194,7 @@ class titleProcess extends module_process {
         $sms = $smsru->send_one($data); // Отправка сообщения и возврат данных в переменную
 
         $sms_json = json_encode($sms);
-        $this->nModel->saveSMSlog ($phone, $sms->sms_id, $sms->status_code, @$sms->status_text || 'OK', $sms_json);
+        $this->nModel->saveSMSlog ($phone, @$sms->sms_id || 0, @$sms->status_code || 0, @$sms->status_text || 'OK', $sms_json);
         if ($sms->status == "OK") {
             return $sms->sms_id;
         } else {

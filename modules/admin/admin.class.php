@@ -817,7 +817,7 @@ class adminProcess extends module_process {
 		$this->regAction ( 'userUpdate', 'Обновить данные пользователя', ACTION_GROUP );
 		$this->regAction ( 'userBan', 'Удалить пользователя в корзину', ACTION_GROUP );
 		$this->regAction ( 'userUnBan', 'Восстановить пользователя', ACTION_GROUP );
-		$this->regAction ( 'checkUser', 'Проверка пользователя', ACTION_GROUP );
+		$this->regAction ( 'checkUser', 'Проверка пользователя', ACTION_PUBLIC );
 		$this->regAction ( 'groupNew', 'Диалог создания группы', ACTION_GROUP );
 		$this->regAction ( 'groupAdd', 'Добавить группу', ACTION_GROUP );
 		$this->regAction ( 'groupEdit', 'Редактировать группу', ACTION_GROUP );
@@ -957,22 +957,26 @@ class adminProcess extends module_process {
 				$msg = 'обновлен';
 			}
 			if ($res) {
-				$this->nView->viewMessage ( 'Профиль клиента успешно '.$msg, 'Сообщение' );
-				$message1 = ' Ваш профиль '.$msg.'<br />' . rn . rn;
+				$this->nView->viewMessage ( 'Профиль успешно '.$msg, 'Сообщение' );
 				$message2 = ' Профиль клиента успешно '.$msg.'<br />' . rn . rn;
 				$usInfo = '';
 				foreach ( $Params as $key => $val ) {
 					$usInfo .= $key . ' : ' . (is_array($val)?json_encode($val, JSON_UNESCAPED_UNICODE):$val) . '<br />' . rn;
 				}
-				$message1 .= $usInfo;
 				$message2 .= $usInfo;
 
-				sendMail('Профиль '.$msg, $message1, $Params['email'],'Интранет портал');
+				$user_mess = "<p>Благодарим за регистрацию на сайте im.pochta911.ru</p>
+<p>Для входа используйте: </p>
+<p><b>Логин:</b> ".$Params ['login']."</p>
+<p><b>Пароль:</b> ".$Params ['pass']."</p>
+
+<p>Если вы забудьте пароль, вы можете восстановить его, введя телефон на который был зарегистрирован аккаунт, в разделе восстановления пароля.</p>";
+
+				sendMail('Профиль '.$msg, $user_mess, $Params['email'],'Интранет портал');
 				sendMail('Пользователь '.$msg, $message2, 'djidi@mail.ru','Интранет портал');
 			} else {
-				$this->nView->viewError ( array ('Ошибка профиля' ) );
+				$this->nView->viewError ( array ('Ошибка редактирования профиля' ) );
 			}
-			//$action = 'userList';
 			$this->updated = true;
 		}
 		
