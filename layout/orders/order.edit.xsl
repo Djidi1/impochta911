@@ -412,13 +412,13 @@
                 <span class="order-add-title text-success">
                     Кол-во
                 </span>
-                <input type="number" class="order-route-data number goods_val" name="goods_val[]" title="Количество товара" value="{goods_val}" onchange="calc_route(1);" required=""/>
+                <input type="number" class="order-route-data number goods_val" name="goods_val[]" title="Количество товара" value="{goods_val}" onchange="calc_route(1);" min="0" required=""/>
             </div>
             <div class="form-control" style="width: 15%;" title="Общая сумма наличных, которую необходимо забрать у получателя, включая  цену доставки если ее оплачивает получатель.">
                 <span class="order-add-title text-success">
                     ₽ от получателя
                 </span>
-                <input type="number" class="order-route-data number cost_tovar" name="cost_tovar[]" value="{cost_tovar}" onkeyup="re_calc(this)" required=""/>
+                <input type="number" class="order-route-data number cost_tovar" name="cost_tovar[]" value="{cost_tovar}" onchange="re_calc(this)" min="0" required=""/>
             </div>
             <div class="form-control" style="width: 15%;">
                 <span class="order-add-title text-success">
