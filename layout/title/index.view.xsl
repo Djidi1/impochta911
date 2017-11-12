@@ -3,23 +3,23 @@
     <xsl:template match="container[@module = 'index']">
         <xsl:if test="//page/@isAjax != 1">
             <div class="row">
-                <div class="camera_wrap">
+                <div class="camera_wrap" style="height: 200px; display:block;">
                     <div data-src="images/image_1.jpg?v1">
                         <div class="camera_caption fadeIn camera_effected">
-                            <h3>Курьерская доставка в Санкт-Петербурге</h3>
-                            <h1>в течении 3-х часов - это про нас!</h1>
+                            <h3>Курьерская служба срочной доставки</h3>
+                            <h1>в Санкт-Петербурге</h1>
                         </div>
                     </div>
                     <div data-src="images/image_1.jpg?v1">
                         <div class="camera_caption  fadeIn camera_effected">
-                            <h1>Постоянным клиентам скидка до 20%</h1>
-                            <h3>подробности у менеджеров</h3>
+                            <h1>Доставим за 3 часа по Санкт-Петербургу</h1>
+                            <h3>от 360 до 480 руб</h3>
                         </div>
                     </div>
                     <div data-src="images/image_1.jpg?v1">
                         <div class="camera_caption fadeIn camera_effected">
-                            <h1>Скидка до 10%</h1>
-                            <h3>при онлайн заказе</h3>
+                            <h1>Организуем ваш отдел доставки</h1>
+                            <h3> от 30 адресов</h3>
                         </div>
                     </div>
                 </div>
@@ -103,14 +103,14 @@
             <div class="row">
                 <div class="col-xs-12">
                     <div class="input-group routes-block" rel="{position()}" style="width: 100%;">
-                        <div class="form-control" style="width: 70%;">
+                        <div class="form-control" style="width: 100%;">
                             <span class="order-add-title text-info">Адрес отправления</span>
                             <input type="search" class="order-route-data spb-streets js-street_upper" name="to[]" title="Улица, проспект и т.д." onchange="" autocomplete="off" required=""/>
                         </div>
-                        <div class="form-control" style="width: 30%;">
-                            <span class="order-add-title text-info">дом/корп.</span>
-                            <select type="text" class="order-route-data to_house number" name="to_house[]" title="Дом/Корпус" onchange="calc_route(1)" autocomplete="off" required="" AOGUID=""/>
-                        </div>
+                        <!--<div class="form-control" style="width: 30%;">-->
+                            <!--<span class="order-add-title text-info">дом/корп.</span>-->
+                            <!--<select type="text" class="order-route-data to_house number" name="to_house[]" title="Дом/Корпус" onchange="calc_route(1)" autocomplete="off" required="" AOGUID=""/>-->
+                        <!--</div>-->
                     </div>
                 </div>
             </div>
@@ -118,14 +118,14 @@
             <div class="row">
                 <div class="col-xs-12">
                     <div class="input-group routes-block" rel="{position()}" style="width: 100%;">
-                        <div class="form-control" style="width: 70%;">
+                        <div class="form-control" style="width: 100%;">
                             <span class="order-add-title text-info">Адрес доставки</span>
                             <input type="search" class="order-route-data spb-streets js-street_upper" name="to[]" title="Улица, проспект и т.д." onchange="" autocomplete="off" required=""/>
                         </div>
-                        <div class="form-control" style="width: 30%;">
-                            <span class="order-add-title text-info">дом/корп.</span>
-                            <select type="text" class="order-route-data to_house number" name="to_house[]" title="Дом/Корпус" onchange="calc_route(1)" autocomplete="off" required="" AOGUID=""/>
-                        </div>
+                        <!--<div class="form-control" style="width: 30%;">-->
+                            <!--<span class="order-add-title text-info">дом/корп.</span>-->
+                            <!--<select type="text" class="order-route-data to_house number" name="to_house[]" title="Дом/Корпус" onchange="calc_route(1)" autocomplete="off" required="" AOGUID=""/>-->
+                        <!--</div>-->
                     </div>
                 </div>
             </div>

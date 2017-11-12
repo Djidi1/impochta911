@@ -874,12 +874,12 @@ class ordersProcess extends module_process {
                 list($chat_id, $phone) = $this->nModel->getChatIdByOrder($order_id);
                 if (isset($chat_id) and $chat_id != '') {
                     $this->telegram($message, $chat_id);
-//                    $this->telegram($message, '243045100'); // Отправка нового заказа Админу
-//                    $this->telegram($message, '196962258');
-//                    $this->telegram($message, '379575863');
+                    $this->telegram($message, '243045100'); // Отправка нового заказа Админу
+                    $this->telegram($message, '196962258');
+                    $this->telegram($message, '379575863');
                 }
                 if (isset($phone) and $phone != '') {
-                    $this->send_sms($phone, $message);
+                    $this->send_sms($phone, $this->getOrderTextSMS($order_id, $params['status'][0]));
                 }
             }
 
@@ -925,7 +925,7 @@ class ordersProcess extends module_process {
 					$this->telegram($message, $chat_id);
 				}
                 if (isset($phone) and $phone != '') {
-                    $this->send_sms($phone, $message);
+                    $this->send_sms($phone, $this->getOrderTextSMS($order_id, $new_status));
                 }
 				echo $result;
 			}else {
@@ -1127,6 +1127,37 @@ class ordersProcess extends module_process {
                 $order_info_message .= " <b>Статус:</b> " . $order_route_info['status'] . "\r\n";
             }
 //            $order_info_message .= " <b>Стоимость заказа:</b> " . (+$order_route_info['cost_route'] + $order_route_info['cost_tovar']) . "\r\n ";
+        }
+        return $order_info_message;
+    }
+
+    public function getOrderTextSMS($order_id, $status){
+        $order_info = $this->nModel->getOrderInfo($order_id);
+        $order_routes_info = $this->nModel->getOrderRoutesInfo($order_id);
+        $order_info_message = "Заказ № " . $order_id . "\r\n";
+        if ($status == 1) {
+            $order_info_message .= "Дата: " . $order_info['date'] . "\r\n";
+            $order_info_message .= "Откуда: " . $order_info['from_addr'] . "\r\n";
+        }
+        $i = 0;
+        foreach ($order_routes_info as $order_route_info) {
+            $i++;
+            if (count($order_routes_info) > 1){
+                $order_info_message .= "Сегмент №$i:\r\n";
+            }
+
+            if ($status == 1 or $status == 4) {
+                $order_info_message .= "Куда: " . $order_route_info['to_addr'] . "\r\n";
+            }
+            if ($order_route_info['id_status'] == 1) {
+                $order_info_message .= "Заказ принят, ожидайте курьера\r\n";
+            } elseif ($order_route_info['id_status'] == 4) {
+                $order_info_message .= "Доставлен получателю\r\n";
+            } elseif ($order_route_info['id_status'] == 5) {
+                $order_info_message .= "Отменен\r\n";
+            } else {
+                $order_info_message .= "Статус: " . $order_route_info['status'] . "\r\n";
+            }
         }
         return $order_info_message;
     }

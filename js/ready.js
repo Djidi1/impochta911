@@ -21,30 +21,32 @@ jQuery(function ($) {
             $loading.hide();
         });
 
-    $('.data-table').dataTable({"language": {
-        "processing": "Подождите...",
-        "search": "Поиск:",
-        "lengthMenu": "Показать _MENU_ записей",
-        "info": "Записи с _START_ до _END_ из _TOTAL_ записей",
-        "infoEmpty": "Записи с 0 до 0 из 0 записей",
-        "infoFiltered": "(отфильтровано из _MAX_ записей)",
-        "infoPostFix": "",
-        "loadingRecords": "Загрузка записей...",
-        "zeroRecords": "Записи отсутствуют.",
-        "emptyTable": "В таблице отсутствуют данные",
-        "paginate": {
-            "first": "Первая",
-            "previous": "Предыдущая",
-            "next": "Следующая",
-            "last": "Последняя"
-        },
-        "aria": {
-            "sortAscending": ": активировать для сортировки столбца по возрастанию",
-            "sortDescending": ": активировать для сортировки столбца по убыванию"
+    $('.data-table').dataTable({
+        "language": {
+            "processing": "Подождите...",
+            "search": "Поиск:",
+            "lengthMenu": "Показать _MENU_ записей",
+            "info": "Записи с _START_ до _END_ из _TOTAL_ записей",
+            "infoEmpty": "Записи с 0 до 0 из 0 записей",
+            "infoFiltered": "(отфильтровано из _MAX_ записей)",
+            "infoPostFix": "",
+            "loadingRecords": "Загрузка записей...",
+            "zeroRecords": "Записи отсутствуют.",
+            "emptyTable": "В таблице отсутствуют данные",
+            "paginate": {
+                "first": "Первая",
+                "previous": "Предыдущая",
+                "next": "Следующая",
+                "last": "Последняя"
+            },
+            "aria": {
+                "sortAscending": ": активировать для сортировки столбца по возрастанию",
+                "sortDescending": ": активировать для сортировки столбца по убыванию"
+            }
         }
-    }});
+    });
 
-    add_data_table($('.new-logist-data-table'),'logist');
+    add_data_table($('.new-logist-data-table'), 'logist');
 
     $('.thumbnail').click(function () {
         var src = $(this).attr("src");
@@ -52,22 +54,33 @@ jQuery(function ($) {
         bootbox.alert(img);
     });
 
-    if ($('.camera_wrap').length && $('body').width() > 768)
+    if ($('DIV.camera_wrap').length && $('body').width() > 768) {
         $('.camera_wrap').camera({
             height: '200px'
         });
-
+    }else{
+        $('.camera_wrap').hide();
+    }
 
     $('#back-top').hide().find('a').click(function () {
         $('body,html').animate({
             scrollTop: 0
-        }, 800);
+        }, 600);
         return false;
     });
 
+    setTimeout(function(){
+        var hash = window.location.hash;
+        if (hash != '') {
+            $('html, body').animate({
+                scrollTop: $(window.location.hash).offset().top
+            }, 500);
+        }
+    },1500);
+
 
     $(window).scroll(function(){
-        if ($('.navbar').length > 0) {
+        if ($('nav.navbar').length > 0) {
             if (isVisisble($('.navbar'))) {
                 $("#back-top").show();
             } else {
@@ -82,7 +95,7 @@ jQuery(function ($) {
 
     // Установка дата/время пикеров
     $('.time-picker').each(function () {
-        $(this).datetimepicker(timeoptions).on("dp.change", function (e) {
+        $(this).datetimepicker(timeoptions).on("dp.change", function () {
             test_time_routes(this)
         });
 
@@ -116,7 +129,8 @@ jQuery(function ($) {
 
 });
 function incTimeNow() {
-    $('#time_now').val(parseInt($('#time_now').val())+1);
+    var tm_now = parseInt($('#time_now').val());
+    $('#time_now').val(tm_now+1);
     timestampToTime();
     setTimeout('incTimeNow()',1000);
 }

@@ -46,14 +46,16 @@
 						</div>
 						<ul class="nav navbar-nav navbar-right">
 							<li>
-								<!--<a class="callme_viewform" href="#">Зарегистрироваться</a>-->
-								<a href="#" onclick="showThem('register_pop'); return false;"><b class="text-danger">Зарегистрироваться</b></a>
+								<a href="/pages/view-50/">О нас</a>
 							</li>
+							<li>
+								<a href="/pages/view-51/">Тарифы</a>
+							</li>							
 							<li>
 								<a href="/pages/view-49/">Условия сотрудничества</a>
 							</li>
 							<li>
-								<a href="/pages/view-50/">О нас</a>
+								<a href="#" onclick="showThem('register_pop'); return false;"><b class="text-danger">Регистрация</b></a>
 							</li>
 						</ul>
 						<script>
@@ -74,7 +76,7 @@
 									<input id="mod-reg-name" type="text" name="name" class="form-control" size="18" value="" onblur="" onfocus="" required=""/>
 								</p>
 								<p>
-									<label for="mod-reg-login">Логин <small class="text-muted">имя для входа в систему</small></label>
+									<label for="mod-reg-login">Логин <small class="text-muted">придумайте логин который будет использоваться в вашем аккаунте</small></label>
 									<input id="mod-reg-login" type="text" name="login" class="form-control login" onkeyup="check_user(this)" required=""/>
 								</p>
 								<p>
@@ -119,7 +121,7 @@
 				</script>
 			</div>
 			<div class="mobile-sub-menu">
-				<div class="slogan">Логистика для цветочных магазинов</div>
+				<div class="slogan">Мы спасаем ваше время</div>
 				<div class="moduletable_LoginForm login-mobile">
 					<xsl:apply-templates select="//page/body/module[@name = 'CurentUser']/container[@module = 'login']"/>
 				</div>

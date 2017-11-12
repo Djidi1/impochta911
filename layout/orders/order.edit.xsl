@@ -418,7 +418,7 @@
                 <span class="order-add-title text-success">
                     ₽ от получателя
                 </span>
-                <input type="text" class="order-route-data number cost_tovar" name="cost_tovar[]" value="{cost_tovar}" onkeyup="re_calc(this)" required=""/>
+                <input type="number" class="order-route-data number cost_tovar" name="cost_tovar[]" value="{cost_tovar}" onkeyup="re_calc(this)" required=""/>
             </div>
             <div class="form-control" style="width: 15%;">
                 <span class="order-add-title text-success">

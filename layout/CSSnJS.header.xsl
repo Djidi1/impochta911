@@ -21,9 +21,9 @@
         <script src="/js/bootstrap-datetimepicker.js"/>
         <script src="/js/bootstrap-typeahead.min.js"/>
         <script src="/js/camera.min.js"/>
-        <script src="/js/ready.js?v2.4"/>
-        <script src="/js/common.js?v3.6"/>
-        <script src="/js/script.js?v2.6"/>
+        <script src="/js/ready.js?v2.6"/>
+        <script src="/js/common.js?v3.7"/>
+        <script src="/js/script.js?v2.7"/>
         <script src="//cdn.ckeditor.com/4.6.1/full/ckeditor.js"/>
         <script src="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"/>
         <script src="//cdn.datatables.net/plug-ins/3cfcc339e89/integration/bootstrap/3/dataTables.bootstrap.js"/>
@@ -32,7 +32,7 @@
             <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyAnDrB-qO4i5uCua-4krGQsloWYJBRtgNU&libraries=places"></script>
                 ]]>
             </xsl:text>
-        <script src="/js/gmap.js?v2.4"/>
+        <script src="/js/gmap.js?v2.6"/>
         <script>
             $(function(){
             if ($('#edit_content').length){CKEDITOR.replace( 'edit_content');}

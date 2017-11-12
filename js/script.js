@@ -15,7 +15,7 @@ function open_dialog(url, title) {
 }
 
 function showThem(id){
-	opendialog(id,'Форма входа',350,320);
+	opendialog(id,'Регистрация',350,320);
 }
 
 function opendialog(id, title){
