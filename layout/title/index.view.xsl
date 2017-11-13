@@ -136,7 +136,7 @@
             <div class="alert alert-info">
                 <span class="glyphicon glyphicon-ok-sign"/>
                 <xsl:text> </xsl:text>
-                <i><a class="callme_viewform" href="#">Зарегистрируйтесь</a>, пожалуйста, чтобы мы могли осуществлять для вас доставки.</i>
+                <i><a href="#" onclick="showThem('register_pop'); return false;" ><b class="text-danger">Зарегистрируйтесь</b></a>, пожалуйста, чтобы мы могли осуществлять для вас доставки.</i>
             </div>
         </div>
         <div class="col-sm-8">
