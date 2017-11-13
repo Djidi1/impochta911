@@ -60,7 +60,11 @@ class titleModel extends module_model {
         $name = $this->get_assoc_array($sql);
         return (isset($name[0]['name'])) ? $name[0]['name'] : false;
     }
-
+    public function getUserLogin($phone){
+        $sql = "SELECT login FROM users WHERE phone = '$phone'";
+        $name = $this->get_assoc_array($sql);
+        return (isset($name[0]['login'])) ? $name[0]['login'] : false;
+    }
     public function updUserPass($phone, $pin_code, $sms_id){
         $sql = "SELECT name FROM users WHERE phone = '$phone'";
         $name = $this->get_assoc_array($sql);
@@ -134,7 +138,7 @@ class titleProcess extends module_process {
                 echo "<div class='alert alert-warning'>Пользователь с таким телефоном уже зарегестрирован.<br>Если вы забыли пароль, нажмите ".'<span class="btn-link text-info pointer" onclick="recover_password(\''.$phone.'\')">восстановить</span>'.".</div>";
             } else {
                 $pin_code = mt_rand(1000, 9999);
-                $sms_id = $this->send_sms($phone_user, $pin_code, 0);
+                $sms_id = $this->send_sms($login, $phone_user, $pin_code, 0);
                 if (!$sms_id) {
                     echo "<div class='alert alert-danger'>Ошибка отправки СМС.</div>";
                 } else {
@@ -155,8 +159,9 @@ class titleProcess extends module_process {
             if (!$name) {
                 echo "<div class='alert alert-warning'>Пользователь с таким телефоном не зарегестрирован.</div>";
             } else {
+                $login = $this->nModel->getUserLogin($phone_user);
                 $pin_code = mt_rand(1000, 9999);
-                $sms_id = $this->send_sms($phone_user, $pin_code, 2);
+                $sms_id = $this->send_sms($login, $phone_user, $pin_code, 2);
                 if (!$sms_id) {
                     echo "<div class='alert alert-danger'>Ошибка отправки СМС.</div>";
                 } else {
@@ -178,7 +183,7 @@ class titleProcess extends module_process {
 		/********************************************************************************/
 		
 	}
-    public function send_sms($phone, $pin_code, $isConfirm = 0){
+    public function send_sms($login, $phone, $pin_code, $isConfirm = 0){
         $smsru = new SMSRU('69da81b5-ee1e-d004-a1aa-ac83d2687954'); // Ваш уникальный программный ключ, который можно получить на главной странице
 
         $data = new stdClass();
@@ -188,7 +193,7 @@ class titleProcess extends module_process {
         } elseif ($isConfirm == 2) {
             $data->text = "Временный пароль от pochta911.ru $pin_code"; // Восстановление доступа
         } else {
-            $data->text = "Регистрация на pochta911.ru. Логин $phone, разовый пароль $pin_code"; // Регистрация
+            $data->text = "Регистрация на pochta911.ru. Логин $login, разовый пароль $pin_code"; // Регистрация
         }
         $data->from = 'pochta911ru';
         $sms = $smsru->send_one($data); // Отправка сообщения и возврат данных в переменную

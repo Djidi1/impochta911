@@ -174,31 +174,28 @@
                             <!--<font color="red">* Поля обязательны для заполнения.</font>-->
                         </div>
                         <div class="panel-footer">
-                        <xsl:if test="$no_edit != 1">
                             <div class="row">
-                                <div class="col-xs-6">
-                                    <div style="text-align: center">
+                                <div class="col-sm-4" style="text-align: center">
+                                    <a href="/" class="btn btn-warning"><span class="glyphicon glyphicon-circle-arrow-left"/> Выйти без сохранения</a>
+                                </div>
+                                <xsl:if test="$no_edit != 1">
+                                    <div class="col-sm-4" style="text-align: center">
                                         <span class="btn btn-info calc_route" onclick="calc_route(1)">Рассчитать маршрут</span>
                                     </div>
-                                </div>
-                                <div class="col-xs-6">
-                                    <div style="text-align: center">
-                                        <input class="btn btn-success btn-submit" type="button" value="сохранить" onclick="return test_time_all_routes()"/>
+                                    <div class="col-sm-4" style="text-align: center">
+                                        <input class="btn btn-success btn-submit" type="button" value="Сохранить заказ" onclick="return test_time_all_routes()"/>
                                     </div>
-                                </div>
+                                </xsl:if>
                             </div>
                             <br/>
-                            <div class="row">
-                                <div class="col-xs-12">
-                                        <a href="/" class="btn btn-warning"><span class="glyphicon glyphicon-circle-arrow-left"/> Выйти без сохранения</a>
+                            <xsl:if test="$no_edit = 1">
+                                <div class="alert alert-warning" style="margin: 0 15px">
+                                    Если вы хотетите отредактировать или отменить заказ свяжитесь, пожалуйста, с оператором по телефону: <b>407-24-52</b>
                                 </div>
-                            </div>
-                        </xsl:if>
-                        <xsl:if test="$no_edit = 1">
-                            <div class="alert alert-warning" style="margin: 0 15px">
-                                Если вы хотетите отредактировать или отменить заказ свяжитесь, пожалуйста, с оператором по телефону: <b>407-24-52</b>
-                            </div>
-                        </xsl:if>
+                            </xsl:if>
+                            <xsl:if test="order/dk">
+                                <div style="text-align:right" class="small text-muted">Изменен: <xsl:value-of select="order/dk"/></div>
+                            </xsl:if>
                         </div>
                     </div>
                 </div>
