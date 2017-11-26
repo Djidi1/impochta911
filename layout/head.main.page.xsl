@@ -162,8 +162,7 @@
             </xsl:if>
             <div class="well wrapper">
                 <div class="footerText">
-                    <div class="footer1">Copyright © <xsl:value-of select="//@year"/> Цветочное такси.
-                    </div>
+                    <div class="footer1">Copyright © <xsl:value-of select="//@year"/> Скорая почта.</div>
                 </div>
             </div>
             <div style="text-align:center">
@@ -174,6 +173,35 @@
                     <a href="?fullscreen=0">Адаптивная версия</a>
                 </xsl:if>
             </div>
+            <!-- Yandex.Metrika counter -->
+            <script type="text/javascript" >
+                (function (d, w, c) {
+                (w[c] = w[c] || []).push(function() {
+                try {
+                w.yaCounter46761789 = new Ya.Metrika({
+                id:46761789,
+                clickmap:true,
+                trackLinks:true,
+                accurateTrackBounce:true,
+                webvisor:true
+                });
+                } catch(e) { }
+                });
+
+                var n = d.getElementsByTagName("script")[0],
+                s = d.createElement("script"),
+                f = function () { n.parentNode.insertBefore(s, n); };
+                s.type = "text/javascript";
+                s.async = true;
+                s.src = "https://mc.yandex.ru/metrika/watch.js";
+
+                if (w.opera == "[object Opera]") {
+                d.addEventListener("DOMContentLoaded", f, false);
+                } else { f(); }
+                })(document, window, "yandex_metrika_callbacks");
+            </script>
+            <noscript><div><img src="https://mc.yandex.ru/watch/46761789" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+            <!-- /Yandex.Metrika counter -->
         </div>
     </xsl:template>
 </xsl:stylesheet>

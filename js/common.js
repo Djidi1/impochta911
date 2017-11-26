@@ -291,23 +291,26 @@ function re_calc(obj){
     var pay_type = $(route_row).find('.pay_type').val();
     var inkass = 0;
 
-    $(route_row).find('.pay_type option').hide();
+    // Скрываем способы оплаты, если зашел клиент
+    if ($('BODY').attr('group_id') == 2) {
+        $(route_row).find('.pay_type option').hide();
 
-    var PayTypeIsDisabled = $(route_row).find('.pay_type').is(':disabled');
-    //Если инкассация больше 0 то автоматически ставиться "Вычитается из полученных"
-    if (cost_tovar > 0 && !PayTypeIsDisabled) {
-        $(route_row).find('.pay_type').val('3');
-        $(route_row).find('.pay_type option[value=3]').show();
-    }
-    //если человек ставит 0 в инкасацию, то у него остается только 2 варианта – отправитель или получатель выбрать.
-    if (cost_tovar == 0 && (pay_type != 1 || pay_type != 2) && !PayTypeIsDisabled) {
-        pay_type = (pay_type != 1 && pay_type != 2) ? 1 : pay_type;
-        $(route_row).find('.pay_type').val(pay_type);
-        $(route_row).find('.pay_type option[value=1]').show();
-        $(route_row).find('.pay_type option[value=2]').show();
-    }
-    if (PayTypeIsDisabled){
-        $(route_row).find('.pay_type option[value='+pay_type+']').show();
+        var PayTypeIsDisabled = $(route_row).find('.pay_type').is(':disabled');
+        //Если инкассация больше 0 то автоматически ставиться "Вычитается из полученных"
+        if (cost_tovar > 0 && !PayTypeIsDisabled) {
+            $(route_row).find('.pay_type').val('3');
+            $(route_row).find('.pay_type option[value=3]').show();
+        }
+        //если человек ставит 0 в инкасацию, то у него остается только 2 варианта – отправитель или получатель выбрать.
+        if (cost_tovar == 0 && (pay_type != 1 || pay_type != 2) && !PayTypeIsDisabled) {
+            pay_type = (pay_type != 1 && pay_type != 2) ? 1 : pay_type;
+            $(route_row).find('.pay_type').val(pay_type);
+            $(route_row).find('.pay_type option[value=1]').show();
+            $(route_row).find('.pay_type option[value=2]').show();
+        }
+        if (PayTypeIsDisabled) {
+            $(route_row).find('.pay_type option[value=' + pay_type + ']').show();
+        }
     }
     if (pay_type == 2){
         inkass = Number(cost_tovar)+Number(cost_route);

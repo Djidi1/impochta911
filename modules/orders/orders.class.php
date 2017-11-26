@@ -871,12 +871,12 @@ class ordersProcess extends module_process {
             if ($send_message_to_client and !$dontsend_message and isset($order_id)) {
                 $message = $this->getOrderTextInfo($order_id);
                 $message .= $message_add_text;
+                $this->telegram($message, '243045100'); // Отправка нового заказа Админу
+                $this->telegram($message, '196962258');
+                $this->telegram($message, '379575863');
                 list($chat_id, $phone) = $this->nModel->getChatIdByOrder($order_id);
                 if (isset($chat_id) and $chat_id != '') {
                     $this->telegram($message, $chat_id);
-                    $this->telegram($message, '243045100'); // Отправка нового заказа Админу
-                    $this->telegram($message, '196962258');
-                    $this->telegram($message, '379575863');
                 }
                 if (isset($phone) and $phone != '') {
                     $this->send_sms($phone, $this->getOrderTextSMS($order_id, $params['status'][0]));
@@ -1111,7 +1111,7 @@ class ordersProcess extends module_process {
 
             $order_info_message .= " <b>Адрес доставки:</b> " . $order_route_info['to_addr'] . "\r\n";
             $order_info_message .= ($order_route_info['comment'] != '')?" <b>Комментарий:</b> " . $order_route_info['comment'] . "\r\n":"";
-            $order_info_message .= " <b>Готовность:</b> " . $order_route_info['to_time_ready'] . "\r\n";
+            $order_info_message .= " <b>Период забора:</b> " . $order_route_info['to_time_ready'] . " - " . $order_route_info['to_time_ready_end'] . "\r\n";
             $order_info_message .= " <b>Период получения:</b> " . $order_route_info['to_time'] . " - " . $order_route_info['to_time_end'] . "\r\n";
             $order_info_message .= " <b>Получатель:</b> " . $order_route_info['to_fio'] . " [" . $order_route_info['to_phone'] . "]\r\n";
 	        if ($order_route_info['pay_type'] == 1) {

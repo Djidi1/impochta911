@@ -15,9 +15,6 @@
 		</head>
 	</xsl:template>
 	<xsl:template name="headWrap">
-		<xsl:variable name="content">
-			<xsl:value-of select="//page/body/@contentContainer"/>
-		</xsl:variable>
 		<div id="header">
 			<nav class="navbar navbar-inverse">
 				<div class="container-fluid">
