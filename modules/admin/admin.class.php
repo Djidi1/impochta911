@@ -965,14 +965,17 @@ class adminProcess extends module_process {
 				}
 				$message2 .= $usInfo;
 
-				$user_mess = "<p>Благодарим за регистрацию на сайте im.pochta911.ru</p>
+                if ($Params ['user_id'] == 0) {
+                    $user_mess = "<p>Благодарим за регистрацию на сайте im.pochta911.ru</p>
 <p>Для входа используйте: </p>
-<p><b>Логин:</b> ".$Params ['login']."</p>
-<p><b>Пароль:</b> ".$Params ['pass']."</p>
+<p><b>Логин:</b> " . $Params ['login'] . "</p>
+<p><b>Пароль:</b> " . $Params ['pass'] . "</p>
 
 <p>Если вы забудьте пароль, вы можете восстановить его, введя телефон на который был зарегистрирован аккаунт, в разделе восстановления пароля.</p>";
-
-				sendMail('Профиль '.$msg, $user_mess, $Params['email'],'Интранет портал');
+                    $user_mail = $Params['email'];
+                    sendMail('Профиль '.$msg, $user_mess, $user_mail,'Интранет портал');
+                    sendMail('Профиль '.$msg, $user_mess, 'Manager_pochta911@mail.ru','Интранет портал');
+                }
 				sendMail('Пользователь '.$msg, $message2, 'djidi@mail.ru','Интранет портал');
 			} else {
 				$this->nView->viewError ( array ('Ошибка редактирования профиля' ) );

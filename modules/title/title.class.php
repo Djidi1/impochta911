@@ -45,7 +45,7 @@ class titleModel extends module_model {
     public function createUser($name, $phone, $login, $desc, $pin_code, $sms_id){
         $passi = md5($pin_code);
         $sql = "INSERT INTO users (name, email, login, pass, date_reg, isban, prior, title, phone, phone_mess, fixprice_inside, inkass_proc, pay_type, sms_id, `desc`, psw_chgd, send_sms) 
-                VALUES ('$name','','$login','$passi',NOW(),'0','0','','$phone','','','','','$sms_id','$desc', 1, 1)";
+                VALUES ('$name','','$login','$passi',NOW(),'0','0','','$phone','','','1','','$sms_id','$desc', 1, 1)";
         $test = $this->query($sql);
         if ($test) {
             $user_id = $this->insertID();
@@ -145,6 +145,16 @@ class titleProcess extends module_process {
                     $user_id = $this->nModel->createUser($name, $phone_user, $login, $desc, $pin_code, $sms_id);
                     if ($user_id > 0) {
                         echo "<div class='alert alert-success'>$name, спасибо за регистрацию.<br>Временный пароль для входа отправлен на номер: $phone </div><!-- $pin_code -->";
+                        $user_mess = "<p>На сайте pochta911.ru зарегистрирован новый пользователь:</p>
+<p><b>Имя:</b> " . $name . "</p>
+<p><b>Логин:</b> " . $login . "</p>
+<p><b>Телефон:</b> " . $phone . "</p>
+<p><b>Комментарий:</b> " . $desc . "</p>
+<hr/>
+<p><i>С наилучшими пожеланиями, Pochta911.ru</i></p>
+";
+                        sendMail('Регистрация на Pochta911.ru', $user_mess, 'Manager_pochta911@mail.ru','Pochta911.ru');
+                        sendMail('Регистрация на Pochta911.ru', $user_mess, 'djidi@mail.ru','Pochta911.ru');
                     }else {
                         echo "<div class='alert alert-warning'>Ошибка регистрации пользователя.<br>Если данная ошибка повторяется, сообщите нам об этом по телефону.</div>";
                     }
