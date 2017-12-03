@@ -428,3 +428,33 @@ DIV.delivery_sum_title {
 .pointer{
     cursor: pointer;
 }
+.naklad-route-data {
+    padding: 15px 5px 0;
+    text-align: center;
+    font-size: 12px;
+}
+TABLE.borderless td, TABLE.borderless th {
+    border-top: none !important;
+    padding: 8px 0 !important;
+    border-bottom: 1px solid #ddd;
+}
+@media print {
+    DIV.naklad-panel TABLE.borderless td, TABLE.borderless th {
+        border-top: none !important;
+        padding: 8px 0 !important;
+        border-bottom: 1px solid #ddd;
+    }
+    DIV.naklad-panel span.order-add-title {font-size: 8px !important;}
+    DIV.naklad-panel .panel-info>.panel-heading {background-color: #d9edf7 !important;}
+    DIV.naklad-panel .panel-success>.panel-heading {background-color: #dff0d8 !important;}
+    DIV.naklad-panel .panel-warning>.panel-heading {background-color: #fcf8e3 !important;}
+    DIV.naklad-panel .panel-success>.panel-heading b { color: #3c763d !important; }
+    DIV.naklad-panel .panel-info>.panel-heading b { color: #31708f !important; }
+    DIV.naklad-panel .panel-warning>.panel-heading b { color: #8a6d3b !important; }
+}
+DIV.naklad-panel .form-control { overflow: hidden; }
+DIV.naklad-panel .panel-body { padding: 0; }
+DIV.naklad-panel .panel-heading { padding: 5px; }
+DIV.naklad-panel .input-group .form-control:last-child {
+    border-radius: unset;
+}

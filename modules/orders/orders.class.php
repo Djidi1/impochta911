@@ -14,9 +14,11 @@ class ordersModel extends module_model {
             if (isset($row['address'])) $row['address'] = str_replace('город Санкт-Петербург,','',$row['address']);
             if (isset($row['address'])) $row['address'] = str_replace('Санкт-Петербург,','',$row['address']);
             if (isset($row['address'])) $row['address'] = str_replace('Россия','',$row['address']);
+            if (isset($row['address'])) $row['address'] = trim($row['address'],', ');
             if (isset($row['from'])) $row['from'] = str_replace('город Санкт-Петербург,','',$row['from']);
             if (isset($row['from'])) $row['from'] = str_replace('Санкт-Петербург,','',$row['from']);
             if (isset($row['from'])) $row['from'] = str_replace('Россия','',$row['from']);
+            if (isset($row['from'])) $row['from'] = trim($row['from'],',');
 			if (isset($row['ready'])) $row['ready'] = substr($row['ready'],0,5);
 			if (isset($row['to_time'])) $row['to_time'] = substr($row['to_time'],0,5);
 			if (isset($row['to_time_end'])) $row['to_time_end'] = substr($row['to_time_end'],0,5);
@@ -92,6 +94,14 @@ class ordersModel extends module_model {
     }
 
 
+    public function getClientData($user_id, $address_id){
+		$sql = "SELECT
+				  u.title, u.name, u.phone, ua.address, ua.comment
+				FROM users u 
+				LEFT JOIN users_address ua ON ua.user_id = u.id
+				WHERE u.id = $user_id and ua.id = $address_id";
+		return $this->get_assoc_array($sql);
+	}
     public function getClientTitle($user_id){
 		$sql = 'SELECT
 				  title
@@ -133,10 +143,12 @@ class ordersModel extends module_model {
 	public function getRoutes($order_id) {
 		$sql = 'SELECT r.id id_route, `to`,to_region,to_AOGUID,to_house,to_corpus,to_appart,
 					  to_fio,to_phone,to_coord,from_coord,lenght,cost_route,cost_tovar,cost_car,
-					  `to_time`,`to_time_end`,r.`comment`, s.status, s.id status_id, r.pay_type, 
-					  r.to_time_ready, r.to_time_ready_end, r.goods_type, r.goods_val
+					  `to_time`,`to_time_end`,r.`comment`, s.status, s.id status_id, r.pay_type, p.pay_type,
+					  r.to_time_ready, r.to_time_ready_end, r.goods_type, r.goods_val, g.goods_name
 				FROM orders_routes r
 				LEFT JOIN orders_status s ON s.id = r.id_status
+				LEFT JOIN goods_types g ON g.id = r.goods_type
+				LEFT JOIN orders_pay_types p ON p.id = r.pay_type
 				WHERE id_order = '.$order_id;
 		return $this->get_assoc_array($sql);
 	}
@@ -479,7 +491,8 @@ class ordersModel extends module_model {
 	function dateToRuFormat($date) {
 		$date = $this->mydate_to_dmy( $date );
 		setlocale(LC_ALL, 'ru_RU.CP1251', 'rus_RUS.CP1251', 'Russian_Russia.1251');
-		$date = strftime("%a, %d.%m.%Y", strtotime($date));
+//		$date = strftime("%a, %d.%m.%Y", strtotime($date));
+		$date = strftime("%d.%m.%Y", strtotime($date));
 		return iconv('windows-1251','UTF-8', $date);
 	}
 	
@@ -680,6 +693,7 @@ class ordersProcess extends module_process {
 		$this->regAction ( 'view', 'Главная страница заказов', ACTION_GROUP );
 		$this->regAction ( 'LogistList', 'Для логистов', ACTION_GROUP );
 		$this->regAction ( 'order', 'Заявка', ACTION_GROUP );
+		$this->regAction ( 'naklad', 'Накладная', ACTION_GROUP );
 		$this->regAction ( 'orderUpdate', 'Редактирование заявки', ACTION_GROUP );
 		$this->regAction ( 'orderBan', 'Удаление заявки', ACTION_GROUP );
 		$this->regAction ( 'chg_status', 'Изменение статуса заявки', ACTION_GROUP );
@@ -785,6 +799,21 @@ class ordersProcess extends module_process {
 			$this->nView->viewOrderEdit ( $order, $users, $stores, $routes, $pay_types, $statuses,
                 $car_couriers, $timer, $prices, $add_prices, $client_title, $without_menu, $is_single,
                 $user_pay_type, $user_fix_price, $times, $g_price, $goods );
+		}
+		if ($action == 'naklad') {
+            $this->Vals->setVals(array('without_menu' => 1));
+			$order_id = $this->Vals->getVal ( 'naklad', 'GET', 'integer' );
+			$order = $this->nModel->getOrder($order_id);
+            $uid = isset($order['id_user'])?$order['id_user']:$user_id;
+			$routes = $this->nModel->getRoutes($order_id);
+			$client = $this->nModel->getClientData($uid, $order['id_address']);
+			$this->nView->viewNaklad ( $order, isset($client[0])?$client[0]:array(), $routes );
+
+			$PageAjax = new PageForAjax ( $this->modName, $this->modName, $this->modName, 'page.print.xsl' );
+            $isAjax = $this->Vals->getVal ( 'ajax', 'INDEX' );
+            $PageAjax->addToPageAttr ( 'isAjax', $isAjax );
+            $html = $PageAjax->getBodyAjax2 ( $this->nView );
+            sendData ( $html );
 		}
 
 		if ($action == 'orderBan') {
@@ -1420,6 +1449,28 @@ class ordersView extends module_View {
         $ContainerAddPrices = $this->addToNode ( $Container, 'add_prices', '' );
         foreach ( $add_prices as $item ) {
             $this->arrToXML ( $item, $ContainerAddPrices, 'item' );
+        }
+
+		return true;
+	}
+
+	public function viewNaklad($order, $client, $routes) {
+		$this->pXSL [] = RIVC_ROOT . 'layout/orders/naklad.xsl';
+        $Container = $this->newContainer('naklad');
+        $this->addAttr('today', date('d.m.Y'), $Container);
+        $this->addAttr('time_now', time(), $Container);
+
+		$this->arrToXML ( $order, $Container, 'order' );
+		$this->arrToXML ( $client, $Container, 'client' );
+
+        if (count($routes) > 0) {
+            $ContainerRoutes = $this->addToNode($Container, 'routes', '');
+            foreach ($routes as $item) {
+                $this->arrToXML($item, $ContainerRoutes, 'item');
+            }
+        }else{
+            $ContainerRoutes = $this->addToNode($Container, 'routes', '');
+            $this->addToNode($ContainerRoutes, 'item', 'fake');
         }
 
 		return true;

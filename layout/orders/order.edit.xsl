@@ -174,17 +174,22 @@
                             <!--<font color="red">* Поля обязательны для заполнения.</font>-->
                         </div>
                         <div class="panel-footer">
-                            <div class="row">
-                                <div class="col-sm-4" style="text-align: center">
+                            <div class="btn-group" style="width: 100%;">
                                     <a href="/" class="btn btn-warning"><span class="glyphicon glyphicon-circle-arrow-left"/> Выйти без сохранения</a>
-                                </div>
+                                <xsl:if test="(order/id > 0)">
+                                    <span class="btn btn-primary" onclick="print_window({order/id})">Распечатать накладную</span>
+                                    <script>
+                                        function print_window(order_id) {
+                                            window.open('/orders/naklad-'+order_id+'/', 'Накладная к заказу №'+order_id+'');
+                                        }
+                                    </script>
+                                </xsl:if>
+                                <xsl:if test="not(order/id > 0)">
+                                    <span class="btn btn-primary disabled" onclick="bootbox.alert('Распечатать накладную можно будет после сохранения заказа')" title="Распечатать накладную можно будет после сохранения заказа" style="pointer-events: all;">Распечатать накладную</span>
+                                </xsl:if>
                                 <xsl:if test="$no_edit != 1">
-                                    <div class="col-sm-4" style="text-align: center">
                                         <span class="btn btn-info calc_route" onclick="calc_route(1)">Рассчитать маршрут</span>
-                                    </div>
-                                    <div class="col-sm-4" style="text-align: center">
                                         <input class="btn btn-success btn-submit" type="button" value="Сохранить заказ" onclick="return test_time_all_routes()"/>
-                                    </div>
                                 </xsl:if>
                             </div>
                             <br/>

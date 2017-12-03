@@ -45,7 +45,7 @@ class titleModel extends module_model {
     public function createUser($name, $phone, $login, $desc, $pin_code, $sms_id){
         $passi = md5($pin_code);
         $sql = "INSERT INTO users (name, email, login, pass, date_reg, isban, prior, title, phone, phone_mess, fixprice_inside, inkass_proc, pay_type, sms_id, `desc`, psw_chgd, send_sms) 
-                VALUES ('$name','','$login','$passi',NOW(),'0','0','','$phone','','','1','','$sms_id','$desc', 1, 1)";
+                VALUES ('$name','','$login','$passi',NOW(),'0','0','','$phone','','','1 ','','$sms_id','$desc', 1, 1)";
         $test = $this->query($sql);
         if ($test) {
             $user_id = $this->insertID();

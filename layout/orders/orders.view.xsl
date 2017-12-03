@@ -82,8 +82,7 @@
             <tbody>
                 <xsl:for-each select="orders/item/route/array">
                     <tr onclick="open_bootbox_dialog('/orders/order-{../../id}/');">
-                        <xsl:attribute name="class">
-                            status_<xsl:value-of select="status_id"/> order_route_<xsl:value-of select="id_route"/> order_<xsl:value-of select="../../id"/>
+                        <xsl:attribute name="class">pointer status_<xsl:value-of select="status_id"/> order_route_<xsl:value-of select="id_route"/> order_<xsl:value-of select="../../id"/>
                             <xsl:if test="../../car_accept != ''"> info</xsl:if>
                         </xsl:attribute>
                         <td>

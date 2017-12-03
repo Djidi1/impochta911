@@ -48,10 +48,9 @@ class TValues {
         }
         if (!isset($this->index[$name])) $this->index[$name] = $val;
         elseif (!isset($this->index[$name.'-'.$method])) $this->index[$name.'-'.$method] = $val;
-        else /* addWarning */;
     }
 
-/*    public function setVal($name, $val, $method = 'GET', $safe = false, $prefix = '') {
+    public function setVal($name, $val, $method = 'GET', $safe = false, $prefix = '') {
       if ($safe && isset($this->$name)) {
         if ($prefix) $this->setVal($prefix.' '.$name, $val);
         else return false;
@@ -59,7 +58,7 @@ class TValues {
       if (!isset($this->$name)) $this->setValTo($name, $val, $method);
       #$this->$name = $val;
       return true;
-    }       */
+    }
 
     public function setVals($vals) { foreach ($vals as $key=>$val) $this->setVal($key,$val); }
 
