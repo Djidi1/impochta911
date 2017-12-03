@@ -458,3 +458,21 @@ DIV.naklad-panel .panel-heading { padding: 5px; }
 DIV.naklad-panel .input-group .form-control:last-child {
     border-radius: unset;
 }
+
+@media (min-width:768px){
+    .navbar-brand img {width: 150px;}
+    .mobile-sub-menu {display:none;}
+    .order-statuses {
+        position: absolute !important;
+        top: 95px;
+    }
+    #form_orders>div.row>.col-sm-2 {width: 50%;}
+    #form_orders>div.row>.col-sm-3 {width: 50%;}
+    ul.bottom-menu li {margin-left: 1px;}
+}
+@media (min-width:1024px){
+    .order-statuses {
+        position: absolute !important;
+        top: 115px;
+    }
+}
