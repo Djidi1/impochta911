@@ -143,7 +143,7 @@ class ordersModel extends module_model {
 	public function getRoutes($order_id) {
 		$sql = 'SELECT r.id id_route, `to`,to_region,to_AOGUID,to_house,to_corpus,to_appart,
 					  to_fio,to_phone,to_coord,from_coord,lenght,cost_route,cost_tovar,cost_car,
-					  `to_time`,`to_time_end`,r.`comment`, s.status, s.id status_id, r.pay_type, p.pay_type,
+					  `to_time`,`to_time_end`,r.`comment`, s.status, s.id status_id, r.pay_type as pay_type_id, p.pay_type,
 					  r.to_time_ready, r.to_time_ready_end, r.goods_type, r.goods_val, g.goods_name
 				FROM orders_routes r
 				LEFT JOIN orders_status s ON s.id = r.id_status

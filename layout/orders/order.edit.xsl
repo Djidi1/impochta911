@@ -454,7 +454,7 @@
                     <xsl:if test="//@user_pay_type > 0">
                         <xsl:attribute name="disabled">disabled</xsl:attribute>
                     </xsl:if>
-                    <xsl:variable name="pay_type" select="pay_type"/>
+                    <xsl:variable name="pay_type" select="pay_type_id"/>
                     <xsl:variable name="user_pay_type" select="//@user_pay_type"/>
                     <option value=""> </option>
                     <xsl:for-each select="../../pay_types/item">
