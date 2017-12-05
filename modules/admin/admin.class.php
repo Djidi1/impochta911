@@ -966,7 +966,7 @@ class adminProcess extends module_process {
 				$message2 .= $usInfo;
 
                 if ($Params ['user_id'] == 0) {
-                    $user_mess = "<p>Благодарим за регистрацию на сайте im.pochta911.ru</p>
+                    $user_mess = "<p>Благодарим за регистрацию на сайте pochta911.ru</p>
 <p>Для входа используйте: </p>
 <p><b>Логин:</b> " . $Params ['login'] . "</p>
 <p><b>Пароль:</b> " . $Params ['pass'] . "</p>
