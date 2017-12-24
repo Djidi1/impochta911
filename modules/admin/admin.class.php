@@ -973,10 +973,10 @@ class adminProcess extends module_process {
 
 <p>Если вы забудьте пароль, вы можете восстановить его, введя телефон на который был зарегистрирован аккаунт, в разделе восстановления пароля.</p>";
                     $user_mail = $Params['email'];
-                    sendMail('Профиль '.$msg, $user_mess, $user_mail,'Интранет портал');
-                    sendMail('Профиль '.$msg, $user_mess, 'Manager_pochta911@mail.ru','Интранет портал');
+                    sendMail('Профиль '.$msg, $user_mess, $user_mail,'Pochta911.ru');
+                    sendMail('Профиль '.$msg, $user_mess, 'Manager_pochta911@mail.ru','Pochta911.ru');
                 }
-				sendMail('Пользователь '.$msg, $message2, 'djidi@mail.ru','Интранет портал');
+				sendMail('Пользователь '.$msg, $message2, 'djidi@mail.ru','Pochta911.ru');
 			} else {
 				$this->nView->viewError ( array ('Ошибка редактирования профиля' ) );
 			}

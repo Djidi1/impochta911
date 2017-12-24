@@ -189,6 +189,7 @@
                                 </tbody>
                             </table>
                             <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id != 1">
+                                <input class="form-control" type="hidden" name="send_sms" value="{user/send_sms}"/>
                                 <input class="form-control" type="hidden" name="pay_type" value="{user/pay_type}"/>
                                 <input class="form-control" type="hidden" name="phone_mess" value="{user/phone_mess}"/>
                                 <input class="form-control" type="hidden" name="fixprice_inside" value="{user/fixprice_inside}"/>
