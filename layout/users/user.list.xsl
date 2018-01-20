@@ -36,10 +36,10 @@
 										</a>
 									</div>
 								</xsl:if>
-								<!--<div style="float: right;">-->
+								<div style="float: right;">
 									<!--<input class="btn btn-info btn-sm" type="button" onclick="printBlock('#printlist');" value="Печать"/>-->
-                                    <!--<input class="btn btn-info btn-sm" type="button" onclick="buttonSetFilter('langFilter', '1', 'ajax','input', '/admin/userList-1/xls-1/', true)" value="Excel"/>-->
-								<!--</div>-->
+                                    <input class="btn btn-info btn-sm" type="button" onclick="buttonSetFilter('langFilter', '1', 'ajax','input', '/admin/userList-1/xls-1/', true)" value="Excel"/>
+								</div>
 							</td>
 						</tr>
 					</tbody>
@@ -108,7 +108,7 @@
 				<table class="table table-hover table-stripsed table-condensed data-table">
 					<thead>
 						<tr>
-							<th>№  [ID]</th>
+							<th>ID</th>
 							<th>Контактное лицо</th>
 							<th>Компания</th>
                             <th>Логин</th>
@@ -128,7 +128,7 @@
 							<xsl:if test="isban=0">
 								<tr>
 									<td>
-									<xsl:value-of select="position()"/> [<xsl:value-of select="id"/>]
+										<xsl:value-of select="id"/>
 									</td>
 									<td>
 										<xsl:value-of select="name"/>
