@@ -10,16 +10,16 @@
         <link rel="stylesheet" href="/css/bootstrap.min.css"/>
         <link rel="stylesheet" href="/css/bootstrap-datetimepicker.min.css"/>
         <link rel="stylesheet" href="/css/dataTables.bootstrap.css"/>
+        <script src="/js/jquery.min.js"/>
+        <script src="/js/moment.min.js"/>
+        <script src="/js/moment.ru.js"/>
+        <script src="/js/bootstrap-datetimepicker.js"/>
         <xsl:if test="/page/@without_menu != 1">
-            <script src="/js/jquery.min.js"/>
             <script src="/js/jquery-ui.min.js"/>
             <script src="/js/bootstrap.min.js"/>
             <script src="/js/bootbox.min.js"/>
             <script src="/js/jquery.multiselect.min.js?v4.0.3"/>
             <script src="/js/jquery.mask.js"/>
-            <script src="/js/moment.min.js"/>
-            <script src="/js/moment.ru.js"/>
-            <script src="/js/bootstrap-datetimepicker.js"/>
             <script src="/js/bootstrap-typeahead.min.js"/>
             <script src="/js/camera.min.js"/>
             <script src="/js/ready.js?v2.6"/>
