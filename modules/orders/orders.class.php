@@ -1147,7 +1147,7 @@ class ordersProcess extends module_process {
 		        $order_info_message .= " <b>Взять в магазине:</b> " . ($order_route_info['cost_route']) . " руб.\r\n";
 	        }elseif ($order_route_info['pay_type'] == 2) {
 		        $order_info_message .= " <b>Наличные у клиента:</b> " . ($order_route_info['cost_route'] + $order_route_info['cost_tovar']) . " руб.\r\n";
-	        }elseif ($order_route_info['pay_type'] == 3) {
+	        }elseif ($order_route_info['pay_type'] == 3 or $order_route_info['pay_type'] == 4 ) {
 		        $order_info_message .= " <b>Наличные у клиента:</b> " . $order_route_info['cost_tovar'] . " руб. \r\n";
 	        }
             if ($order_route_info['id_status'] == 4) {
