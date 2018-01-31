@@ -266,18 +266,21 @@
             <span class="input-group-addon">
                 <xsl:value-of select="position()"/>
             </span>
-            <div class="form-control" style="width: 60%;">
+            <div class="form-control" style="width: 80%;">
                 <span class="order-add-title text-info">Адрес доставки</span>
-                <input type="search" class="order-route-data spb-streets js-street_upper" name="to[]" title="Улица, проспект и т.д." value="{to}" onchange="" autocomplete="off" required="" region="{to_region}"/>
+                <input type="search" class="order-route-data spb-streets" name="to[]" title="Улица, проспект и т.д." value="{to}" onchange="" autocomplete="off" required="" region="{to_region}" to_coord="{to_coord}"/>
+                <input type="hidden" class="to_coord" name="to_coord[]" value="{to_coord}"/>
                 <input type="hidden" class="to_region" name="to_region[]" value="{to_region}"/>
                 <input type="hidden" class="to_AOGUID" name="to_AOGUID[]" value="{to_AOGUID}"/>
             </div>
+            <!--
             <div class="form-control" style="width: 20%;">
                 <span class="order-add-title text-info">дом/корп/строение</span>
                 <select type="text" class="order-route-data to_house number" name="to_house[]" title="Дом" value="{to_house}" onchange="calc_route(1)" autocomplete="off" required="" AOGUID="{to_AOGUID}">
                     <option value="{to_house}"><xsl:value-of select="to_house"/></option>
                 </select>
             </div>
+            -->
             <div class="form-control" style="width: 15%; display:none">
                 <span class="order-add-title text-info">корп/строение</span>
                 <input type="text" class="order-route-data to_corpus number" name="to_corpus[]" title="Корпус" value="{to_corpus}" onchange="calc_route(1)"/>

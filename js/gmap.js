@@ -101,20 +101,31 @@ function calc_route(recalc_cost, dest_point) {
     $.each(order_route, function () {
         this.setMap(null);
     });
+
+    // Адреса доставки
     var way_points = [];
     var i = 0;
     $('.spb-streets').each(function () {
-        // Адреса доставки
-        var route_address = $(this).val();
-        var route_address_region = $(this).attr('region');
-        var route_to_house = $(this).parent().parent().find('.to_house').val();
-        if (route_address !== '') {
-            route_address = (route_address.indexOf(',') > -1 || route_address_region == 47) ? 'Ленинградская обл., ' + route_address : 'Санкт-Петербург, ' + route_address;
+        var to_coord = $(this).attr('to_coord');
+        // Для старых заказов - без координат
+        if (to_coord != '') {
             way_points.push({
-                location: (route_address + ((typeof route_to_house != 'undefined' && route_to_house != null && route_to_house != '') ? (', ' + route_to_house) : '')) + '',
+                location: strToLatLngComma(to_coord),
                 stopover: true
             });
             i++;
+        }else{
+            var route_address = $(this).val();
+            var route_address_region = $(this).attr('region');
+            var route_to_house = $(this).parent().parent().find('.to_house').val();
+            if (route_address !== '') {
+                route_address = (route_address.indexOf(',') > -1 || route_address_region == 47) ? 'Ленинградская обл., ' + route_address : 'Санкт-Петербург, ' + route_address;
+                way_points.push({
+                    location: (route_address + ((typeof route_to_house != 'undefined' && route_to_house != null && route_to_house != '') ? (', ' + route_to_house) : '')) + '',
+                    stopover: true
+                });
+                i++;
+            }
         }
     });
 
@@ -127,12 +138,13 @@ function calc_route(recalc_cost, dest_point) {
     // Конечная точка маршрута
     // Исклюаем конечную точку маршрута из промежуточных
     var destination_point = way_points.pop();
-
+/*
     // Заглушка, на постоянный поиск адресов в яндексе.
     if (typeof dest_point == 'undefined'){
         getDestCoordsFromYandex(recalc_cost, destination_point.location);
         return true;
     }
+*/
     var destination_point_location = (typeof dest_point == 'undefined' || dest_point == '') ? destination_point.location : dest_point;
 
     if (origin_point === ''){
@@ -388,6 +400,11 @@ function getDestCoordsFromYandex(recalc_cost, dest_point){
         }
     });
 }
+function strToLatLngComma(ll){
+    var latlng = ll.split(',');
+    return new google.maps.LatLng(parseFloat(latlng[0]), parseFloat(latlng[1]));
+}
+
 function strToLatLng(ll){
     var latlng = ll.split(' ');
     return new google.maps.LatLng(parseFloat(latlng[1]), parseFloat(latlng[0]));

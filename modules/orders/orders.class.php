@@ -575,7 +575,7 @@ class ordersModel extends module_model {
                 $params ['status'][$key] = ($params['car_courier'] == 0 and $params ['status'][$key] != 5) ? 1 : $params ['status'][$key];
 				$sql_values .= ($key > 0)?',':'';
                 $sql_values .= ' (\''.$order_id.'\',\''.$params ['to'][$key].'\',\''.$params ['to_region'][$key].'\',\''.$params ['to_AOGUID'][$key].'\',
-                            \''.$params ['to_house'][$key].'\',\''.$params ['to_corpus'][$key].'\',
+                            \''.$params ['to_coord'][$key].'\',\''.$params ['to_house'][$key].'\',\''.$params ['to_corpus'][$key].'\',
 							\''.$params ['to_appart'][$key].'\',\''.$params ['to_fio'][$key].'\',\''.$params ['to_phone'][$key].'\',
 							\''.$params ['cost_route'][$key].'\',\''.$params ['cost_tovar'][$key].'\',\''.$params ['cost_car'][$key].'\',
 							\''.$params ['to_time'][$key].'\',\''.$params ['to_time_end'][$key].'\',\''.$params ['comment'][$key].'\',
@@ -583,7 +583,7 @@ class ordersModel extends module_model {
 							\''.$params ['status'][$key].'\',\''.$params ['goods_type'][$key].'\',\''.$params ['goods_val'][$key].'\'	)';
 			}
 			if ($sql_values != '') {
-                $sql = "INSERT INTO orders_routes (id_order,`to`,`to_region`,`to_AOGUID`,`to_house`,`to_corpus`,`to_appart`,`to_fio`,`to_phone`,`cost_route`,`cost_tovar`,`cost_car`,`to_time`,`to_time_end`,`comment`, `to_time_ready`, `to_time_ready_end`, `pay_type`, `id_status`, goods_type, goods_val) VALUES $sql_values";
+                $sql = "INSERT INTO orders_routes (id_order,`to`,`to_region`,`to_AOGUID`,`to_coord`,`to_house`,`to_corpus`,`to_appart`,`to_fio`,`to_phone`,`cost_route`,`cost_tovar`,`cost_car`,`to_time`,`to_time_end`,`comment`, `to_time_ready`, `to_time_ready_end`, `pay_type`, `id_status`, goods_type, goods_val) VALUES $sql_values";
                 $this->query($sql);
             }
 		}
@@ -834,6 +834,7 @@ class ordersProcess extends module_process {
 			$params['order_comment'] = $this->Vals->getVal ( 'order_comment', 'POST', 'string' );
 			$params['to'] = $this->Vals->getVal ( 'to', 'POST', 'array' );
 			$params['to_region'] = $this->Vals->getVal ( 'to_region', 'POST', 'array' );
+			$params['to_coord'] = $this->Vals->getVal ( 'to_coord', 'POST', 'array' );
 			$params['to_AOGUID'] = $this->Vals->getVal ( 'to_AOGUID', 'POST', 'array' );
 			$params['to_time_ready'] = $this->Vals->getVal ( 'to_time_ready', 'POST', 'array' );
 			$params['to_time_ready_end'] = $this->Vals->getVal ( 'to_time_ready_end', 'POST', 'array' );

@@ -374,16 +374,7 @@ function test_time_routes_add() {
             test_time_routes_add();
         }
         // Если время готовности меньше времени С
-        else if (this_ready_end != '-' &&
-            (TimeToFloat(this_ready_end) > TimeToFloat(this_to_time) ||
-                TimeToFloat(this_ready_end) > TimeToFloat(this_to_time_target))) {
-            $(this).find('.to_time').val(this_ready_end);
-            $(this).find('.to_time_target').val(this_ready_end);
-            test_time_routes_add();
-        }
-        // Если время готовности меньше времени С
-        else if (this_ready_end == '-' &&
-            (TimeToFloat(this_ready) > TimeToFloat(this_to_time) ||
+        else if ( (TimeToFloat(this_ready) > TimeToFloat(this_to_time) ||
                 TimeToFloat(this_ready) > TimeToFloat(this_to_time_target))) {
             $(this).find('.to_time').val(this_ready);
             $(this).find('.to_time_target').val(this_ready);

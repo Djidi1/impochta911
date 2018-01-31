@@ -15,6 +15,11 @@
         <script src="/js/moment.ru.js"/>
         <script src="/js/bootstrap-datetimepicker.js"/>
         <xsl:if test="/page/@without_menu != 1">
+            <link href="//cdn.jsdelivr.net/npm/suggestions-jquery@17.10.1/dist/css/suggestions.min.css" rel="stylesheet" />
+            <!--[if lt IE 10]>
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajaxtransport-xdomainrequest/1.0.1/jquery.xdomainrequest.min.js"></script>
+            <![endif]-->
+            <script src="//cdn.jsdelivr.net/npm/suggestions-jquery@17.10.1/dist/js/jquery.suggestions.min.js"/>
             <script src="/js/jquery-ui.min.js"/>
             <script src="/js/bootstrap.min.js"/>
             <script src="/js/bootbox.min.js"/>
@@ -22,8 +27,8 @@
             <script src="/js/jquery.mask.js"/>
             <script src="/js/bootstrap-typeahead.min.js"/>
             <script src="/js/camera.min.js"/>
-            <script src="/js/ready.js?v2.6"/>
-            <script src="/js/common.js?v3.8"/>
+            <script src="/js/ready.js?v2.7"/>
+            <script src="/js/common.js?v3.9"/>
             <script src="/js/script.js?v2.7"/>
             <xsl:if test="//page[@name='pages']">
                 <script src="//cdn.ckeditor.com/4.6.1/full/ckeditor.js"/>
@@ -35,12 +40,13 @@
                 <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyAnDrB-qO4i5uCua-4krGQsloWYJBRtgNU&libraries=places"></script>
                     ]]>
                 </xsl:text>
-            <script src="/js/gmap.js?v2.7"/>
+            <script src="/js/gmap.js?v2.8"/>
             <script>
                 $(function(){
-                if ($('#edit_content').length){CKEDITOR.replace( 'edit_content');}
+                    if ($('#edit_content').length){CKEDITOR.replace( 'edit_content');}
                 });
             </script>
+
         </xsl:if>
     </xsl:template>
 

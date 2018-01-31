@@ -91,7 +91,26 @@ jQuery(function ($) {
 
     //ui_add();
     // автозаполнение улиц
-    autoc_spb_streets();
+    $(".spb-streets").suggestions({
+        token: "f9654536b2875678e438a578f979e19cc91dbe4b",
+        type: "ADDRESS",
+        bounds: "city-house",
+        count: 5,
+        constraints: {
+            label: "",
+            locations: [
+                { region: "Санкт-Петербург" },
+                { region: "Ленинградская область" }
+                ],
+            deletable: false
+        },
+        /* Вызывается, когда пользователь выбирает одну из подсказок */
+        onSelect: function(suggestion) {
+            $(this).attr('to_coord', suggestion.data.geo_lat + ',' + suggestion.data.geo_lon);
+            $(this).parent().find('.to_coord').val(suggestion.data.geo_lat + ',' + suggestion.data.geo_lon);
+        }
+    });
+    // autoc_spb_streets();
 
     // Установка дата/время пикеров
     $('.time-picker').each(function () {
