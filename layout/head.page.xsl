@@ -86,7 +86,7 @@
 								</p>
 								<div class="wrapper">
 									<div class="create" style="text-align: right">
-										<span class="btn btn-success" onclick="reg_form_submit(this)">Зарегистрироваться</span>
+										<span class="btn btn-success" onclick="yaCounter46761789.reachGoal('registration');reg_form_submit(this)">Зарегистрироваться</span>
 										<!--<span class="btn btn-success" onclick="reg_form_submit()">Зарегистрироваться</span>-->
 									</div>
 								</div>

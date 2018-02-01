@@ -88,7 +88,7 @@
                 </div>
             </div>
             <hr/>
-            <span class="btn btn-info calc_route" onclick="calc_route(1)">Рассчитать доставку</span>
+            <span class="btn btn-info calc_route" onclick="yaCounter46761789.reachGoal('calculate_delivery');calc_route(1)">Рассчитать доставку</span>
             <div class="delivery_sum_title">---</div>
             <hr/>
             <div class="alert alert-info">
