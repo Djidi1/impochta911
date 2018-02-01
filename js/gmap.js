@@ -246,10 +246,11 @@ function calc_route(recalc_cost, dest_point) {
                         end_in_vsevol = true;
                     }
 
-                    // iLog(neva_path.getUnique());
-                    // iLog(neva_path.getUnique().length);
+                    // iLog(neva_path.getUniqueGmap());
+                    // iLog(neva_path.getUniqueGmap().length);
                     // Если мы сменили за путь несколько районов, то мы пересекали Неву
-                    if (neva_path.getUnique().length > 1) {
+                    var uni = getUniqueGmap(neva_path);
+                    if (uni.length > 1) {
                         neva_cross = true;
                     }
                     var moveList = '';
@@ -434,17 +435,17 @@ function getOutKADprice(dist){
     return Math.ceil(dist*cost_km_kad);
 }
 
-Array.prototype.getUnique = function(){
+function getUniqueGmap(obj){
     var u = {}, a = [];
-    for(var i = 0, l = this.length; i < l; ++i){
-        if(u.hasOwnProperty(this[i])) {
+    for(var i = 0, l = obj.length; i < l; ++i){
+        if(u.hasOwnProperty(obj[i])) {
             continue;
         }
-        a.push(this[i]);
-        u[this[i]] = 1;
+        a.push(obj[i]);
+        u[obj[i]] = 1;
     }
     return a;
-};
+}
 
 function getShortestRoute(response){
     var shortest = Number.MAX_VALUE;

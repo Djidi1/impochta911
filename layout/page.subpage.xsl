@@ -64,7 +64,7 @@
                     </div>
                 </div>
                 <!--ВРЕМЕННО !!! -->
-                <xsl:if test="/page/@without_menu = 1">
+                <xsl:if test="/page/@without_menu != 1">
                 <!-- BEGIN JIVOSITE CODE {literal} -->
                 <script type='text/javascript'>
                     (function(){ var widget_id = 'so0nsK6RO4';var d=document;var w=window;function l(){
