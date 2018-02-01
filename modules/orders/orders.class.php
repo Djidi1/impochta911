@@ -10,6 +10,7 @@ class ordersModel extends module_model {
 		$items = array ();
 		while ( ($row = $this->fetchRowA ()) !== false ) {
 			if (isset($row['to'])) $row['to'] = str_replace('г. Санкт-Петербург,','',$row['to']);
+			if (isset($row['to'])) $row['to'] = str_replace('г Санкт-Петербург,','',$row['to']);
 			if (isset($row['to'])) $row['to'] = str_replace('Г. Санкт-Петербург,','',$row['to']);
             if (isset($row['address'])) $row['address'] = str_replace('город Санкт-Петербург,','',$row['address']);
             if (isset($row['address'])) $row['address'] = str_replace('Санкт-Петербург,','',$row['address']);
@@ -273,7 +274,7 @@ class ordersModel extends module_model {
                        r.to_time_end,
                        r.to_time_ready,
                        r.to_time_ready_end,
-                       CONCAT(r.`to`,\', д.\',r.`to_house`,/*\', корп.\',r.`to_corpus`,*/\', кв.\',r.`to_appart`) to_addr,
+                       CONCAT(r.`to`,/*\', д.\',r.`to_house`,\', корп.\',r.`to_corpus`,*/\', \',r.`to_appart`) to_addr,
                        r.to_fio,
                        r.to_phone,
                        r.pay_type,
