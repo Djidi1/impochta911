@@ -16,7 +16,7 @@
 	</xsl:template>
 	<xsl:template name="headWrap">
 		<div id="header">
-			<nav class="navbar navbar-inverse">
+			<nav class="navbar navbar-default">
 				<div class="container-fluid">
 					<!-- Brand and toggle get grouped for better mobile display -->
 					<div class="navbar-header">
@@ -28,7 +28,7 @@
 							<span class="icon-bar"/>
 						</button>
 						<a class="navbar-brand" href="/" title="Доставка цветов">
-							<img src="./images/logo.png?v2.1" alt="Logo"/>
+							<img src="./images/logo_black.png?v2.1" alt="Logo"/>
 							<span class="header1" style="display:none;">Скорая почта</span>
 						</a>
 					</div>
@@ -39,7 +39,16 @@
 							<xsl:apply-templates select="//page/body/module[@name = 'CurentUser']/container[@module = 'login']"/>
 						</div>
 						<div class="phone-in-header phone">
-							<span class="city-code">(812)</span> 242-80-81
+							<a class="mgo-number-11544" href="tel:+78122428081"><span class="city-code">8 (812)</span> 242-80-81</a>
+							<script>
+								(function(w, d, u, i, o, s, p) {
+								if (d.getElementById(i)) { return; } w['MangoObject'] = o;
+								w[o] = w[o] || function() { (w[o].q = w[o].q || []).push(arguments) }; w[o].u = u; w[o].t = 1 * new Date();
+								s = d.createElement('script'); s.async = 1; s.id = i; s.src = u;
+								p = d.getElementsByTagName('script')[0]; p.parentNode.insertBefore(s, p);
+								}(window, document, '//widgets.mango-office.ru/widgets/mango.js', 'mango-js', 'mgo'));
+								mgo({calltracking: {id: 11544, elements: [{selector: '.mgo-number-11544'}]}});
+							</script>
 						</div>
 						<ul class="nav navbar-nav navbar-right">
 							<li>
@@ -53,6 +62,9 @@
 							</li>
 							<li>
 								<a href="#" onclick="showThem('register_pop'); return false;"><b class="text-danger">Регистрация</b></a>
+							</li>
+							<li>
+								<a href="/pages/view-52/">Контакты</a>
 							</li>
 						</ul>
 						<script>

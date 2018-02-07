@@ -63,7 +63,7 @@
                     <div class="input-group routes-block" rel="{position()}" style="width: 100%;">
                         <div class="form-control" style="width: 100%;">
                             <span class="order-add-title text-info">Адрес отправления</span>
-                            <input type="search" class="order-route-data spb-streets js-street_upper" name="to[]" title="Улица, проспект и т.д." onchange="" autocomplete="off" required=""/>
+                            <input type="search" class="order-route-data spb-streets" name="to[]" title="Улица, проспект и т.д." onchange="" autocomplete="off" required=""/>
                         </div>
                         <!--<div class="form-control" style="width: 30%;">-->
                             <!--<span class="order-add-title text-info">дом/корп.</span>-->
@@ -78,7 +78,7 @@
                     <div class="input-group routes-block" rel="{position()}" style="width: 100%;">
                         <div class="form-control" style="width: 100%;">
                             <span class="order-add-title text-info">Адрес доставки</span>
-                            <input type="search" class="order-route-data spb-streets js-street_upper" name="to[]" title="Улица, проспект и т.д." onchange="" autocomplete="off" required=""/>
+                            <input type="search" class="order-route-data spb-streets" name="to[]" title="Улица, проспект и т.д." onchange="" autocomplete="off" required=""/>
                         </div>
                         <!--<div class="form-control" style="width: 30%;">-->
                             <!--<span class="order-add-title text-info">дом/корп.</span>-->

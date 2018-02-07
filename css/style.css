@@ -458,9 +458,13 @@ DIV.naklad-panel .panel-heading { padding: 5px; }
 DIV.naklad-panel .input-group .form-control:last-child {
     border-radius: unset;
 }
-
-@media (min-width:768px){
+.navbar-brand img {
+    width: 200px;
+}
+@media (max-width:768px){
     .navbar-brand img {width: 150px;}
+}
+@media (min-width:768px){
     .mobile-sub-menu {display:none;}
     .order-statuses {
         position: absolute !important;

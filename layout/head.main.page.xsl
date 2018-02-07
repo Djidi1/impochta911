@@ -15,7 +15,7 @@
     </xsl:template>
     <xsl:template name="main_headWrap">
         <div id="header">
-            <nav class="navbar navbar-inverse">
+            <nav class="navbar navbar-default">
                 <div class="container-fluid">
                     <!-- Brand and toggle get grouped for better mobile display -->
                     <div class="navbar-header">
@@ -27,7 +27,7 @@
                             <span class="icon-bar"/>
                         </button>
                         <a class="navbar-brand" href="/title/" title="Скорая почта">
-                            <img src="./images/logo.png?v2.1" alt="Logo"/>
+                            <img src="./images/logo_black.png?v2.1" alt="Logo"/>
                             <span class="header1" style="display:none;">Скорая почта</span>
                         </a>
                     </div>

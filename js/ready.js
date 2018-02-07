@@ -96,14 +96,15 @@ jQuery(function ($) {
         type: "ADDRESS",
         bounds: "city-house",
         count: 5,
-        constraints: {
+        constraints: [{
             label: "",
-            locations: [
-                { region: "Санкт-Петербург" },
-                { region: "Ленинградская область" }
-                ],
+            locations: [{ region: "Санкт-Петербург" }],
             deletable: false
-        },
+        },{
+            label: "",
+            locations: [{ kladr_id: '47' }],
+            deletable: false
+        }],
         /* Вызывается, когда пользователь выбирает одну из подсказок */
         onSelect: function(suggestion) {
             $(this).attr('to_coord', suggestion.data.geo_lat + ',' + suggestion.data.geo_lon);
