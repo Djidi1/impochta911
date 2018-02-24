@@ -9,6 +9,7 @@ class ordersModel extends module_model {
 		$this->query ( $sql );
 		$items = array ();
 		while ( ($row = $this->fetchRowA ()) !== false ) {
+			if (isset($row['to'])) $row['to'] = str_replace('г Санкт-Петербург,','',$row['to']);
 			if (isset($row['to'])) $row['to'] = str_replace('г. Санкт-Петербург,','',$row['to']);
 			if (isset($row['to'])) $row['to'] = str_replace('г Санкт-Петербург,','',$row['to']);
 			if (isset($row['to'])) $row['to'] = str_replace('Г. Санкт-Петербург,','',$row['to']);
@@ -425,6 +426,10 @@ class ordersModel extends module_model {
         $result_orders = array();
         foreach ($orders as $key => $order) {
             $order['to_time'] = $order['to_time'].'-'.$order['to_time_end'];
+            if (isset($order['to_time_ready'])) {
+                $order['to_time_ready'] = $order['to_time_ready'] . '-' . $order['to_time_ready_end'];
+                unset($order['to_time_ready_end']);
+            }
             unset($order['to_time_end']);
             $result_orders[] = $order;
         }
@@ -1387,7 +1392,7 @@ class ordersView extends module_View {
         $this->addAttr('user_pay_type', $user_pay_type, $Container);
         $this->addAttr('user_fix_price', $user_fix_price, $Container);
 //        $this->addAttr('time_now_five', $time_now_five_h . ":" . $this->roundUpToAny(date('i')), $Container);
-        $time_now_five_min = substr('0'.($this->roundUpToAny(date('i'))),-2);
+        $time_now_five_min = substr('0'.($this->roundUpToAny(date('i'),10)),-2);
         $time_now_five_h = date('H');
         if ($time_now_five_min == 60){
             $time_now_five_min = '00';

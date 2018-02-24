@@ -94,7 +94,7 @@
                 </div><!-- /.container-fluid -->
             </nav>
             <div class="mobile-sub-menu">
-                <div class="slogan">Логистика для интернет магазинов</div>
+                <!--<div class="slogan">Логистика для интернет магазинов</div>-->
                 <div class="moduletable_LoginForm login-mobile">
                     <xsl:apply-templates select="//page/body/module[@name = 'CurentUser']/container[@module = 'login']"/>
                 </div>

@@ -406,7 +406,7 @@
             <td colspan="2" class="{@className}">
                 <div class="alert alert-warning">
                     <span class="{@className}">
-                        <xsl:value-of select="."/>
+                        <xsl:value-of select="." disable-output-escaping="yes"/>
                     </span>
                 </div>
             </td>

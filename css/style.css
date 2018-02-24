@@ -256,6 +256,8 @@ DIV.delivery_sum_title {
 .login-mobile {display: none}
 .slogan {display: none}
 
+.modal-dialog {z-index: 10000;}
+
 @media (max-width: 768px) {
 
     /* Главная страница */
@@ -273,7 +275,7 @@ DIV.delivery_sum_title {
     .phone-in-header.phone {display: none}
     .moduletable_LoginForm.navbar-right {display: none}
     .phone-mobile {display: block; padding: 0;color: #2d3e50;}
-    .login-mobile {display: block; float: left;     border: 1px solid #e28f0c; background: #f39c12; border-radius: 4px; padding: 0 6px;width: 120px; overflow: hidden;}
+    .login-mobile {display: block; float: left;     border: 1px solid #46b8da; background: #5bc0de; border-radius: 4px; padding: 0 6px;width: 120px; overflow: hidden;}
     .login-mobile ul {margin: 0;}
     .login-mobile a {color: white;    padding: 4px !important;}
     .login-mobile .nav .open>a,

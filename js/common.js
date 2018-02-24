@@ -344,6 +344,9 @@ function target_time_show(){
 function round5(x){
     return Math.ceil(x/5)*5;
 }
+function round10(x){
+    return Math.ceil(x/10)*10;
+}
 function round00(x){
     return Math.ceil(x*100)/100;
 }
@@ -361,12 +364,12 @@ function test_time_routes_add() {
         // var next_to_time_end = $(next_route).find('.to_time_end').val();
         // Текущее время
         var m = moment(new Date());
-        var time_now_string = m.hour() + ':' + round5(m.minute());
+        var time_now_string = m.hour() + ':' + round10(m.minute());
 
         // Если текущее время меньше времени готовности
         if (TimeToFloat(this_ready) < TimeToFloat(time_now_string) && moment($('input[name=date]').val(), 'DD.MM.YYYY').isSame(Date.now(), 'day')) {
             $(this).find('.to_time_ready').val(time_now_string);
-            bootbox.alert('Время готовности не может быть меньше текущего времени.');
+            alert_note('Время готовности не может быть меньше текущего времени.');
         }
         // Если время готовности ПО меньше времени готовности С
         else if (this_ready_end != '-' && TimeToFloat(this_ready_end) < TimeToFloat(this_ready)) {
@@ -446,11 +449,11 @@ function test_time_all_routes(){
             }
         });
         if (invalid) {
-            bootbox.alert('Заполните, пожалуйста, все обязательные поля формы заказа.');
+            alert_note('Заполните, пожалуйста, все обязательные поля формы заказа.');
             return false;
         }
         if (need_sync) {
-            bootbox.alert('Время готовности всех заказов должно быть единым.<br/>Мы установили время равным времени готовности первого заказа по маршруту');
+            alert_note('Время готовности всех заказов должно быть единым.<br/>Мы установили время равным времени готовности первого заказа по маршруту');
             $routes_block.find('.to_time_ready').val(first_time);
             return false;
         }
@@ -465,13 +468,13 @@ function test_time_all_routes(){
             if (this_to_time > this_to_time_end) {
                 $(this).find('.to_time').val(this_to_time_end);
                 this_to_time = this_to_time_end;
-                bootbox.alert('Время начала доставки не может быть позже времени окончания доставки.');
+                alert_note('Время начала доставки не может быть позже времени окончания доставки.');
                 return false;
             }
             // Время готовности не может быть больше времени доставки
             if (this_ready > this_to_time) {
                 $(this).find('.to_time_ready').val(this_to_time);
-                bootbox.alert('Время готовности не может быть больше времени начала доставки.');
+                alert_note('Время готовности не может быть больше времени начала доставки.');
                 return false;
             }
         });
@@ -827,4 +830,17 @@ function focus_field(field, dont_style){
 
 function add_phone_masks() {
     $('.phone-number').mask('+7 999 999-99-99',{placeholder:"+7 ___ ___-__-__"});
+}
+
+function alert_note(message){
+    $.notify(
+        {
+            icon: 'glyphicon glyphicon-warning-sign',
+            message: message
+        },
+        {
+            type: 'danger',
+            placement: {from: "top", align: "center"},
+            animate: {enter: 'animated fadeInRight', exit: 'animated fadeOutRight'}
+        });
 }
