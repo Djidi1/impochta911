@@ -130,7 +130,7 @@ function calc_route(recalc_cost, dest_point) {
     });
 
     if (i === 0) {
-        bootbox.alert('Необходимо ввести хотя бы один адрес доставки.');
+        alert_note('Необходимо ввести хотя бы один адрес доставки.');
         return false;
     }
     // Начальная точка маршрута
@@ -267,7 +267,7 @@ function calc_route(recalc_cost, dest_point) {
                             shortInfo += '<hr/>';
                             var beetween_point = Math.ceil(MetersToKilo(distanceInSPb) + MetersToKilo(distanceOutSideSPb));
                             if (beetween_point > 8){
-                                bootbox.alert('Расстояние между пунктами доставки не может превышать 8 км. Ваше расстояние ' +
+                                alert_note('Расстояние между пунктами доставки не может превышать 8 км. Ваше расстояние ' +
                                     beetween_point + ' км. Вам необходимо создать отдельный заказ на данный маршрут.');
                                 $('.btn-submit').attr('disabled','disabled');
                             }else{
@@ -347,7 +347,7 @@ function calc_route(recalc_cost, dest_point) {
                     var dest_point = response.request.destination;
                     getDestCoordsFromYandex(recalc_cost, dest_point);
                 }else {
-                    bootbox.alert('Ошибка построения маршрута: ' + status);
+                    alert_note('Ошибка построения маршрута: ' + status);
                 }
             }
         });
@@ -358,30 +358,32 @@ function getAddMoney(obj, result_cost){
     var cost_route = result_cost;
     var goods_id = $(obj).find('select.goods_type').val();
     var add_money = 0;
-    $('input[goods_id='+goods_id+']').each(function(){
-        var price = parseInt($(this).attr('price'));
-        var value = parseInt($(this).val());
-        var mult = $(this).attr('mult');
-        var fixed = $(this).attr('fixed');
-        var cond = $(this).attr('condition');
-        if (cond == '>' && boxes > value){
-            if (fixed == 1) {
-                add_money = add_money + price;
-            }else{
-                add_money = add_money + (boxes - value) * price;
+    if (goods_id > 0) {
+        $('input[goods_id=' + goods_id + ']').each(function () {
+            var price = parseInt($(this).attr('price'));
+            var value = parseInt($(this).val());
+            var mult = $(this).attr('mult');
+            var fixed = $(this).attr('fixed');
+            var cond = $(this).attr('condition');
+            if (cond == '>' && boxes > value) {
+                if (fixed == 1) {
+                    add_money = add_money + price;
+                } else {
+                    add_money = add_money + (boxes - value) * price;
+                }
+                if (mult > 1) {
+                    add_money = add_money + cost_route * (mult - 1);
+                }
+                // console.log('>')
             }
-            if (mult > 1){
-                add_money = add_money + cost_route * (mult - 1);
+            if (cond == '<' && boxes < value) {
+                console.log('<')
             }
-            // console.log('>')
-        }
-        if (cond == '<' && boxes < value){
-            console.log('<')
-        }
-        if (cond == '=' && boxes == value){
-            console.log('=')
-        }
-    });
+            if (cond == '=' && boxes == value) {
+                console.log('=')
+            }
+        });
+    }
     return add_money;
 }
 function getDestCoordsFromYandex(recalc_cost, dest_point){

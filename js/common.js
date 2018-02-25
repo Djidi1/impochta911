@@ -520,6 +520,8 @@ function test_time_routes_each(route_row){
     var ready_3_period = $('#ready_3_period').val();
     var ready_today_period = $('#ready_today_period').val();
     var period_period = $('#period_period').val();
+    var period_from_period = $('#period_from_period').val();
+    var target_time = $('.target').prop('checked');
 
 
     // Если время доставки меньше текущего, то заказ на следующий день (проверяю по второму времени)
@@ -568,8 +570,13 @@ function test_time_routes_each(route_row){
             no_error = false;
         }
     }
+    // интервал готовности не меньше указанного
+    if ((tt_ready_end - tt_ready) < period_from_period){
+            errors += '<li>Интервал готовности должен быть не меньше '+period_from_period+' мин.</li><br/>';
+            no_error = false;
+    }
     // (6) Проверка от и до не менее 40 мин, если только не к точному времени
-    if (round00(tt_end_2 - tt_2) < (period_period / 60) && !$('.target').prop('checked')){
+    if (round00(tt_end_2 - tt_2) < (period_period / 60) && !target_time){
         errors += '<li>Интервал между значениями "Доставить с" и "Доставить по" не может быть менее '+period_period+' мин.</li><br/>';
         no_error = false;
     }
@@ -666,7 +673,7 @@ function test_time_routes_each(route_row){
  */
 function TimeToFloat(time){
     var result = 0;
-    if (time != ''){
+    if (time != '' && time != null){
         var to_time_ready_arr = time.split(':');
         result = parseInt(to_time_ready_arr[0])+parseInt(to_time_ready_arr[1])/60;
     }

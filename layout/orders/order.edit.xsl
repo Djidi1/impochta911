@@ -268,7 +268,7 @@
             </span>
             <div class="form-control" style="width: 80%;">
                 <span class="order-add-title text-info">Адрес доставки</span>
-                <input type="search" class="order-route-data spb-streets" name="to[]" title="Улица, проспект и т.д." value="{to}" onchange="" autocomplete="off" required="" region="{to_region}" to_coord="{to_coord}">
+                <input type="search" class="order-route-data spb-streets" name="to[]" title="Улица, проспект и т.д." value="{to}" onchange="calc_route(1)" autocomplete="off" required="" region="{to_region}" to_coord="{to_coord}">
                     <xsl:attribute name="value">
                         <xsl:value-of select="to"/><xsl:if test="to_house != ''">, д.<xsl:value-of select="to_house"/></xsl:if>
                     </xsl:attribute>

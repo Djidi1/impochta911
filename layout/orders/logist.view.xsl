@@ -107,10 +107,8 @@
                         <td>
                             <xsl:value-of select="../../id"/>
                         </td>
-                        <td class="hide-mobile"><xsl:value-of select="to_time_ready"/></td>
-                        <td><nobr>
-                            <xsl:value-of select="to_time"/>-<xsl:value-of select="to_time_end"/>
-                        </nobr></td>
+                        <td class="hide-mobile"><nobr><xsl:value-of select="to_time_ready"/>-<xsl:value-of select="to_time_ready_end"/></nobr></td>
+                        <td><nobr><xsl:value-of select="to_time"/>-<xsl:value-of select="to_time_end"/></nobr></td>
                         <td><xsl:value-of select="../../address"/>
                             <br/>
                             <i>

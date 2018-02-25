@@ -1093,6 +1093,7 @@ class adminProcess extends module_process {
             if ($this->Vals->getVal ( 'sub_action', 'POST', 'string' ) == 'save'){
                 $params['period_tomarrow'] = $this->Vals->getVal('period_tomarrow', 'POST', 'array');
                 $params['period_today'] = $this->Vals->getVal('period_today', 'POST', 'array');
+                $params['period_from'] = $this->Vals->getVal('period_from', 'POST', 'array');
                 $params['ready_1'] = $this->Vals->getVal('ready_1', 'POST', 'array');
                 $params['ready_2'] = $this->Vals->getVal('ready_2', 'POST', 'array');
                 $params['ready_3'] = $this->Vals->getVal('ready_3', 'POST', 'array');
