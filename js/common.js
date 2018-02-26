@@ -571,7 +571,7 @@ function test_time_routes_each(route_row){
         }
     }
     // интервал готовности не меньше указанного
-    if ((tt_ready_end - tt_ready) < period_from_period){
+    if ((tt_ready_end - tt_ready) < (period_from_period / 60) && time_ready_end != '-'){
             errors += '<li>Интервал готовности должен быть не меньше '+period_from_period+' мин.</li><br/>';
             no_error = false;
     }
