@@ -1182,7 +1182,7 @@ class ordersProcess extends module_process {
                 $order_info_message .= "Сегмент №$i:\r\n";
             }
 
-            if ($status == 1 or $status == 4) {
+            if ($status == 1/* or $status == 4*/) {
                 $order_info_message .= "Куда: " . $order_route_info['to_addr'] . "\r\n";
             }
             if ($order_route_info['id_status'] == 1) {

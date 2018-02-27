@@ -135,7 +135,7 @@
 					<xsl:apply-templates select="//page/body/module[@name = 'CurentUser']/container[@module = 'login']"/>
 				</div>
 				<div class="phone-in-header phone-mobile">
-					<span class="city-code">(812)</span> 242-80-81
+					<a href="tel:+7-812-242-80-81"><span class="city-code">(812)</span> 242-80-81</a>
 				</div>
 			</div>
 		</div>

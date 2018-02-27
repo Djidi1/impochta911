@@ -86,9 +86,10 @@
                         <!--</form>-->
 
                         <div class="moduletable_LoginForm navbar-right">
-                            <xsl:apply-templates
-                                    select="//page/body/module[@name = 'CurentUser']/container[@module = 'login' and position() = 1]"/>
-                            <!--				<div xmlns="" class="form"><div class="poping_links"><a href="/admin/" style="padding-right: 0px;">Менеджерам</a></div></div>-->
+                            <xsl:apply-templates select="//page/body/module[@name = 'CurentUser']/container[@module = 'login' and position() = 1]"/>
+                        </div>
+                        <div class="phone-in-header hide-mobile" style="float:right">
+                            <a href="tel:+7-812-242-80-81" style="color:#000;"><span class="city-code">(812)</span> 242-80-81</a>
                         </div>
                     </div><!-- /.navbar-collapse -->
                 </div><!-- /.container-fluid -->
@@ -99,7 +100,7 @@
                     <xsl:apply-templates select="//page/body/module[@name = 'CurentUser']/container[@module = 'login']"/>
                 </div>
                 <div class="phone-in-header phone-mobile">
-                    <span class="city-code">(812)</span> 242-80-81
+                    <a href="tel:+7-812-242-80-81"><span class="city-code">(812)</span> 242-80-81</a>
                 </div>
             </div>
         </div>
