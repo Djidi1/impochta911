@@ -128,6 +128,37 @@ function send_new_status(){
 }
 
 function autoc_spb_streets(){
+    $(".spb-streets").each(function() {
+        var $this = $(this);
+        $this.suggestions({
+            token: "f9654536b2875678e438a578f979e19cc91dbe4b",
+            type: "ADDRESS",
+            bounds: "city-house",
+            count: 5,
+            constraints: [{
+                label: "",
+                locations: [{region: "Санкт-Петербург"}],
+                deletable: false
+            }, {
+                label: "",
+                locations: [{kladr_id: '47'}],
+                deletable: false
+            }],
+            /* Вызывается, когда пользователь выбирает одну из подсказок */
+            onSelect: function (suggestion) {
+                if (suggestion.data.qc_geo == 5){
+                    alert_note('Координаты не определены. Попробуйте указать ближайший адрес.');
+                } else if (suggestion.data.qc_geo == 4){
+                    alert_note('Координаты определены с точностью до города. Если необходим более точный расчет попробуйте указать ближайший адрес.');
+                } else if (suggestion.data.qc_geo == 3){
+                    alert_note('Координаты определены с точностью до населенного пункта. Если необходим более точный расчет попробуйте указать ближайший адрес.');
+                }
+                $(this).attr('coord', suggestion.data.geo_lat + ',' + suggestion.data.geo_lon);
+                $(this).parent().find('.coord').val(suggestion.data.geo_lat + ',' + suggestion.data.geo_lon);
+            }
+        });
+    });
+    /*
     // Применяем для подбора улиц
     $(".spb-streets").each(function() {
         var $this = $(this);
@@ -160,6 +191,7 @@ function autoc_spb_streets(){
         });
     });
     getHouseNumbers();
+    */
     /*
     var saved_data = localStorage.getItem('spb_street_data');
     if (typeof saved_data == 'undefined' || saved_data == null || saved_data == '' ) {

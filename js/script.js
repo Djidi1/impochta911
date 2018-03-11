@@ -337,7 +337,7 @@ function email_log_online(){
 
 
 var milisec = 0;
-var seconds_def = 30;
+var seconds_def = 300;
 var seconds = seconds_def;
 var url_set = '';
 $('#counter_input').val(seconds_def);
@@ -355,7 +355,7 @@ function refresh_page(url) {
     } else
         milisec -= 1;
 
-    $('#counter_input').val(seconds + "." + milisec);
+    $('#counter_input').val(seconds + "." + milisec + 'c.');
     setTimeout("refresh_page()", 100);
 }
 

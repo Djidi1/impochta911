@@ -1,15 +1,15 @@
 <?php
 
 //if ($_SERVER['REMOTE_ADDR'] == '127.0.0.1') {
-    define ('DB_HOST','localhost');
-	define ('DB_DATABASE','fl-taxi');
-	define ('DB_USER','root');
-	define ('DB_PASS','');
+//    define ('DB_HOST','localhost');
+//	define ('DB_DATABASE','fl-taxi');
+//	define ('DB_USER','root');
+//	define ('DB_PASS','');
 //} else {
-//    define ('DB_HOST','192.168.137.106');
-//    define ('DB_DATABASE','db1056464_fd');
-//    define ('DB_USER','u1056464_fd');
-//    define ('DB_PASS','qh.C38y(q&fi,8[z');
+    define ('DB_HOST','109.120.131.30');
+    define ('DB_DATABASE','db1056464_im');
+    define ('DB_USER','u1056464_im');
+    define ('DB_PASS','KtKTLK25m');
 //}
 
 define ('DB_USE','mySQL');

@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:template match="container[@module = 'list']">
         <xsl:if test="//page/@isAjax != 1">
-            <div id="counter_form" style="float: right;">
+            <div id="counter_form" style="float: right; display:none">
                 <form name="counter" class="counter">Обновление через <input id="counter_input" type="text" name="d2" disabled="" class="counter_input" style="background-color: transparent;border: none;color: red;width:40px;"/>
                 </form>
                 <script>

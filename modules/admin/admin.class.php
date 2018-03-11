@@ -86,7 +86,7 @@ class adminModel extends module_model {
 
 	public function userInsert($Params) {
 		$passi = md5 ( $Params ['pass'] );
-		$sql = 'INSERT INTO `users` (name,email,login,phone,phone_mess,title,isBan,inkass_proc,fixprice_inside,pay_type,pass,send_sms,date_reg)
+		$sql = 'INSERT INTO `users` (`name`,email,login,phone,phone_mess,title,isBan,inkass_proc,fixprice_inside,maxprice_inside,pay_type,pass,send_sms,date_reg,`desc`,work_times)
 				VALUES (
 				    \'%1$s\',
 				    \'%2$s\',
@@ -95,17 +95,21 @@ class adminModel extends module_model {
 				    \'%5$s\',
 				    \'%6$s\',
 				    \'%7$u\',
-				    \'%8$s\',
+				    \'%8$u\',
 				    \'%9$s\',
-				    \'%10$u\',
-				    \'' . $passi . '\',
+				    \'%10$s\',
 				    \'%11$u\',
-				    NOW()
+				    \'' . $passi . '\',
+				    \'%12$u\',
+				    NOW(),
+				    \'%13$s\',
+				    \'%14$s\'
 				    )';
 
 		$test = $this->query ( $sql, $Params ['username'], $Params ['email'], $Params ['login'], $Params ['phone'],
 			$Params ['phone_mess'], $Params ['title'], $Params ['isBan'], $Params ['inkass_proc'],
-            $Params ['fixprice_inside'], $Params ['pay_type'], $Params ['send_sms'] );
+            $Params ['fixprice_inside'], $Params ['maxprice_inside'], $Params ['pay_type'], $Params ['send_sms'],
+            $Params ['desc'], $Params ['work_times'] );
 
 //        stop($this->sql);
 		$user_id = $this->insertID();
@@ -116,7 +120,7 @@ class adminModel extends module_model {
 			$Params ['user_id'] = $user_id;
 			$this->updateAddrAndCard($Params, 1);
 		}
-		return $test;
+		return array($test,$Params);
 	}
 
 	public function userUpdate($Params) {
@@ -131,19 +135,19 @@ class adminModel extends module_model {
 				    isBan = \'%7$u\',
 				    inkass_proc = \'%8$s\',
 				    fixprice_inside = \'%9$s\',
-				    pay_type = \'%10$u\',
-				    send_sms = \'%11$u\'
+				    maxprice_inside = \'%10$s\',
+				    pay_type = \'%11$u\',
+				    send_sms = \'%12$u\',
+				    `desc` = \'%13$s\',
+				    work_times = \'%14$s\'
 				    ';
+        $sql .= ($Params ['pass'] != '') ? ' ,pass = \''.md5 ( $Params ['pass'] ).'\', psw_chgd = 0 ' : '';
 
-		if ($Params ['pass'] != '') {
-			$passi = md5 ( $Params ['pass'] );
-            $sql .= ' ,pass = \''.$passi.'\', psw_chgd = 0 ';
-		}
-
-		$sql .= ' WHERE `id` = %12$u';
+		$sql .= ' WHERE `id` = %15$u';
 		$test = $this->query ( $sql, $Params ['username'], $Params ['email'], $Params ['login'], $Params ['phone'],
             $Params ['phone_mess'], $Params ['title'], $Params ['isBan'], $Params ['inkass_proc'],
-            $Params ['fixprice_inside'],$Params ['pay_type'], $Params ['send_sms'], $Params ['user_id'] );
+            $Params ['fixprice_inside'],$Params ['maxprice_inside'],$Params ['pay_type'], $Params ['send_sms'],
+            $Params ['desc'], $Params ['work_times'], $Params ['user_id'] );
 
 //        stop($this->sql);
 
@@ -944,20 +948,23 @@ class adminProcess extends module_process {
 			$Params ['send_sms'] = $this->Vals->getVal ( 'send_sms', 'POST', 'integer' );
 			$Params ['inkass_proc'] = $this->Vals->getVal ( 'inkass_proc', 'POST', 'string' );
 			$Params ['fixprice_inside'] = $this->Vals->getVal ( 'fixprice_inside', 'POST', 'string' );
+			$Params ['maxprice_inside'] = $this->Vals->getVal ( 'maxprice_inside', 'POST', 'string' );
+			$Params ['work_times'] = $this->Vals->getVal ( 'work_times', 'POST', 'string' );
+			$Params ['desc'] = $this->Vals->getVal ( 'desc', 'POST', 'string' );
 
 			if ($Params ['isAutoPass'] > 0) {
 				$pass = $this->generatePass ( 6 );
 				$Params ['pass'] = $pass;
 			}
 			if ($Params ['user_id'] == 0) {
-				$res = $this->nModel->userInsert ( $Params );
+				list($res, $Params) = $this->nModel->userInsert ( $Params );
 				$msg = 'добавлен';
 			}else{
 				$res = $this->nModel->userUpdate ( $Params );
 				$msg = 'обновлен';
 			}
 			if ($res) {
-				$this->nView->viewMessage ( 'Профиль успешно '.$msg, 'Сообщение' );
+				$this->nView->viewMessage ( 'Профиль успешно '.$msg.'.  Вернуться в <a href="/admin/userEdit-'.$Params ['user_id'].'/">профиль</a>.<script>window.setTimeout(function(){window.location.href = "/admin/userList-1/idg-2/";}, 5000);</script>', 'Сообщение' );
 				$message2 = ' Профиль клиента успешно '.$msg.'<br />' . rn . rn;
 				$usInfo = '';
 				foreach ( $Params as $key => $val ) {

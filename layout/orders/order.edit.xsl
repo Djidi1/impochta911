@@ -47,13 +47,22 @@
                             <input id="order_id" type="hidden" name="order_id" value="{order/id}"/>
                             <input id="id_user" type="hidden" name="id_user" value="{order/id_user}"/>
                             <div class="row">
-                                <div class="col-sm-2">
+                                <div class="col-sm-2 col-xs-4">
+                                    <label>Когда:</label>
+                                </div>
+                                <div class="col-sm-3 col-xs-8">
+                                    <input class="form-control date-picker" type="text" name="date" onkeyup="check_user(this)" value="{order/date}" size="30" required="">
+                                        <xsl:if test="not(order/date)">
+                                            <xsl:attribute name="value">
+                                                <xsl:value-of select="@today"/>
+                                            </xsl:attribute>
+                                        </xsl:if>
+                                    </input>
+                                </div>
+                                <div class="col-sm-2 col-xs-4">
                                     <label>Откуда:</label>
                                 </div>
-                                <div class="col-sm-4">
-                                    <xsl:if test="order/id_address > 0 or not(order/id_address)">
-                                        <xsl:attribute name="class">col-sm-10</xsl:attribute>
-                                    </xsl:if>
+                                <div class="col-sm-5 col-xs-8">
                                     <select class="form-control store_address js-store_address" name="store_id">
                                         <xsl:for-each select="stores/item">
                                             <option value="{id}">
@@ -72,34 +81,22 @@
                                         </option>
                                     </select>
                                 </div>
-                                <div class="col-sm-6">
-                                    <div class="hand_write">
-                                        <xsl:if test="count(order/id_address) = 0 or order/id_address > 0">
-                                            <xsl:attribute name="style">display:none</xsl:attribute>
-                                        </xsl:if>
-                                        <input class="form-control store_address_new address" name="store_new" value="{order/address_new}" placeholder="Введите адрес"/>
-                                    </div>
+                            </div>
+                            <div class="row hand_write">
+                                <xsl:if test="count(order/id_address) = 0 or order/id_address > 0">
+                                    <xsl:attribute name="style">display:none</xsl:attribute>
+                                </xsl:if>
+                                <div class="col-sm-12">
+                                    <xsl:call-template name="from_address"/>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-sm-2 col-xs-4">
-                                    <label>Дата:</label>
-                                </div>
-                                <div class="col-sm-4 col-xs-8">
-                                    <input class="form-control date-picker" type="text" name="date" onkeyup="check_user(this)" value="{order/date}" size="30" required="">
-                                        <xsl:if test="not(order/date)">
-                                            <xsl:attribute name="value">
-                                                <xsl:value-of select="@today"/>
-                                            </xsl:attribute>
-                                        </xsl:if>
-                                    </input>
-                                </div>
                                 <xsl:if test="order/id > 0">
                                     <div class="col-sm-2 col-xs-4">
                                         <label>Курьер:</label>
                                     </div>
-                                    <div class="col-sm-4 col-xs-8">
-                                        <select class="form-control" name="car_courier" title="Курьер">
+                                    <div class="col-sm-10 col-xs-8">
+                                        <select class="form-control select2" name="car_courier" title="Курьер">
                                             <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 2">
                                                 <xsl:attribute name="disabled">disabled</xsl:attribute>
                                             </xsl:if>
@@ -233,6 +230,7 @@
                     <input id="{name()}_period" type="hidden" value="{period}"/>
                 </xsl:for-each>
                 <input id="user_fix_price" type="hidden" value="{//@user_fix_price}"/>
+                <input id="user_max_price" type="hidden" value="{//@user_max_price}"/>
             </div>
         </div>
         <input id="order_edited" type="hidden" value="0"/>
@@ -251,6 +249,39 @@
             });
         </script>
     </xsl:template>
+
+    <xsl:template name="from_address">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="input-group from-block" rel="{position()}" style="width: 100%;">
+                    <div class="form-control" style="width: 80%;">
+                        <span class="order-add-title text-info">Адрес отправления</span>
+                        <input type="search" class="order-route-data spb-streets" name="from[]" title="Улица, проспект и т.д." value="{order/from}" onchange="" autocomplete="off" required="" coord="{order/from_coord}"/>
+                        <input type="hidden" class="coord" name="from_coord[]" value="{order/from_coord}"/>
+                    </div>
+                    <div class="form-control" style="width: 20%;">
+                        <span class="order-add-title text-info">кв/офис/помещ</span>
+                        <input type="text" class="order-route-data number" name="from_appart[]" title="Квартира" value="{order/from_appart}" required=""/>
+                    </div>
+
+                    <div class="form-control" style="width: 50%;">
+                        <span class="order-add-title text-warning">Отправитель ФИО</span>
+                        <input type="text" class="order-route-data" name="from_fio[]" title="Отправитель" value="{order/from_fio}" onkeyup="$('[name=user_fio]').val($(this).val())" required=""/>
+                    </div>
+                    <div class="form-control" style="width: 50%;">
+                        <span class="order-add-title text-warning">
+                            Телефон отправителя
+                        </span>
+                        <input type="text" class="order-route-data phone-number" name="from_phone[]" title="Телефон отправителя" value="{order/from_phone}" onkeyup="$('[name=user_phone]').val($(this).val())" required=""/>
+                    </div>
+                    <textarea name="from_comment[]" class="form-control" title="Комментарий" placeholder="Примечания к адресу"  style="width: 100%;">
+                        <xsl:value-of select="order/from_comment"/>
+                    </textarea>
+                </div>
+            </div>
+        </div>
+    </xsl:template>
+
     <xsl:template name="adresses">
         <xsl:param name="no_edit"/>
         <xsl:for-each select="routes/item">
@@ -268,14 +299,12 @@
             </span>
             <div class="form-control" style="width: 80%;">
                 <span class="order-add-title text-info">Адрес доставки</span>
-                <input type="search" class="order-route-data spb-streets" name="to[]" title="Улица, проспект и т.д." value="{to}" onchange="calc_route(1)" autocomplete="off" required="" region="{to_region}" to_coord="{to_coord}">
+                <input type="search" class="order-route-data spb-streets" name="to[]" title="Улица, проспект и т.д." value="{to}" onchange="calc_route(1)" autocomplete="off" required="" coord="{to_coord}">
                     <xsl:attribute name="value">
                         <xsl:value-of select="to"/><xsl:if test="to_house != ''">, д.<xsl:value-of select="to_house"/></xsl:if>
                     </xsl:attribute>
                 </input>
-                <input type="hidden" class="to_coord" name="to_coord[]" value="{to_coord}"/>
-                <input type="hidden" class="to_region" name="to_region[]" value="{to_region}"/>
-                <input type="hidden" class="to_AOGUID" name="to_AOGUID[]" value="{to_AOGUID}"/>
+                <input type="hidden" class="coord" name="to_coord[]" value="{to_coord}"/>
             </div>
             <!--
             <div class="form-control" style="width: 20%;">

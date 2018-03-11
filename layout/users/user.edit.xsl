@@ -162,6 +162,12 @@
                                             </td>
                                         </tr>
                                         <tr>
+                                            <td>Максимальная стоимость по городу:</td>
+                                            <td>
+                                                <input class="form-control" type="text" name="maxprice_inside" id="maxprice_inside" value="{user/maxprice_inside}"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
                                             <td>Процент инкассации:</td>
                                             <td>
                                                 <input class="form-control" type="text" name="inkass_proc" id="inkass_proc" value="{user/inkass_proc}"/>
@@ -200,6 +206,28 @@
                     </div>
                 </div>
                 <div class="col-md-6">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <strong>Часы работы</strong>
+                        </div>
+                        <div class="panel-body">
+                           <textarea name="work_times" class="form-control" placeholder="Будни: с 8 до 20&#10;Выходные: с 10 до 18">
+                               <xsl:value-of select="user/work_times "/>
+                           </textarea>
+                        </div>
+                    </div>
+                    <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                <strong>Условия расчетов с компанией</strong>
+                            </div>
+                            <div class="panel-body">
+                                <textarea name="desc" class="form-control">
+                                    <xsl:value-of select="user/desc "/>
+                                </textarea>
+                            </div>
+                        </div>
+                    </xsl:if>
                     <div class="panel panel-info">
                         <div class="panel-heading">
                             <strong>Адреса магазинов</strong>
@@ -242,7 +270,7 @@
                 <xsl:value-of select="position()"/>
             </span>
             <input type="hidden" class="form-control" name="addr_id[]" value="{id}"/>
-            <input id="address" type="text" class="form-control address" name="address[]" placeholder="Адрес" value="{address}"/>
+            <input type="text" class="form-control spb-streets" name="address[]" placeholder="Адрес" value="{address}"/>
             <br/>
             <textarea name="addr_comment[]" class="form-control" placeholder="Комментарий к адресу">
                 <xsl:value-of select="comment"/>

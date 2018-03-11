@@ -30,9 +30,9 @@
             <script src="/js/bootstrap-typeahead.min.js"/>
             <script src="/js/bootstrap-notify.min.js"/>
             <script src="/js/camera.min.js"/>
-            <script src="/js/ready.js?v2.71"/>
-            <script src="/js/common.js?v3.94.2"/>
-            <script src="/js/script.js?v2.7"/>
+            <script src="/js/ready.js?v3.0.1"/>
+            <script src="/js/common.js?v3.0.2"/>
+            <script src="/js/script.js?v3.0.1"/>
             <xsl:if test="//page[@name='pages']">
                 <script src="//cdn.ckeditor.com/4.6.1/full/ckeditor.js"/>
             </xsl:if>
@@ -43,7 +43,7 @@
                 <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyAnDrB-qO4i5uCua-4krGQsloWYJBRtgNU&libraries=places"></script>
                     ]]>
                 </xsl:text>
-            <script src="/js/gmap.js?v2.84"/>
+            <script src="/js/gmap.js?v3.0.3"/>
             <script>
                 $(function(){
                     if ($('#edit_content').length){CKEDITOR.replace( 'edit_content');}

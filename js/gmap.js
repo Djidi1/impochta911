@@ -106,11 +106,11 @@ function calc_route(recalc_cost, dest_point) {
     var way_points = [];
     var i = 0;
     $('.spb-streets').each(function () {
-        var to_coord = $(this).attr('to_coord');
+        var coord = $(this).attr('coord');
         // Для старых заказов - без координат
-        if (to_coord != '') {
+        if (coord != '') {
             way_points.push({
-                location: strToLatLngComma(to_coord),
+                location: strToLatLngComma(coord),
                 stopover: true
             });
             i++;
@@ -147,7 +147,7 @@ function calc_route(recalc_cost, dest_point) {
 */
     var destination_point_location = (typeof dest_point == 'undefined' || dest_point == '') ? destination_point.location : dest_point;
 
-    if (origin_point === ''){
+    if (origin_point === '' || typeof origin_point === 'undefined'){
         origin_point = way_points.pop();
         origin_point = (typeof origin_point !== 'undefined') ? origin_point.location : '';
     }else{
@@ -308,9 +308,14 @@ function calc_route(recalc_cost, dest_point) {
                         var cost_target = $('.target').prop('checked') ? $('#km_target').val() : 0;
                         // Если установлена фиксированная стоимость по городу, то ставим ее вместо расчетной
                         var fixprice_inside = $('#user_fix_price').val();
+                        var maxprice_inside = $('#user_max_price').val();
                         var cost_in_spb = (fixprice_inside == 0 || typeof fixprice_inside == 'undefined')
                             ? (parseFloat(cost_km) + parseFloat(cost_Neva))
                             : fixprice_inside;
+
+                        if (parseFloat(cost_in_spb) > parseFloat(maxprice_inside)) {
+                            cost_in_spb = maxprice_inside;
+                        }
 
                         // Устанавливаем стоимость по маршруту и выполняем перерасчет
                         var cost_route = $('.cost_route').eq(i).get();
