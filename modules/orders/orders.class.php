@@ -9,18 +9,22 @@ class ordersModel extends module_model {
 		$this->query ( $sql );
 		$items = array ();
 		while ( ($row = $this->fetchRowA ()) !== false ) {
-			if (isset($row['to'])) $row['to'] = str_replace('г Санкт-Петербург,','',$row['to']);
-			if (isset($row['to'])) $row['to'] = str_replace('г. Санкт-Петербург,','',$row['to']);
-			if (isset($row['to'])) $row['to'] = str_replace('г Санкт-Петербург,','',$row['to']);
-			if (isset($row['to'])) $row['to'] = str_replace('Г. Санкт-Петербург,','',$row['to']);
-            if (isset($row['address'])) $row['address'] = str_replace('город Санкт-Петербург,','',$row['address']);
-            if (isset($row['address'])) $row['address'] = str_replace('Санкт-Петербург,','',$row['address']);
-            if (isset($row['address'])) $row['address'] = str_replace('Россия','',$row['address']);
+            $vowels = array(
+                'г Санкт-Петербург,',
+                'г. Санкт-Петербург,',
+                'г Санкт-Петербург,',
+                'Г. Санкт-Петербург,',
+                'город Санкт-Петербург,',
+                'Санкт-Петербург,',
+                'Россия',
+            );
+			if (isset($row['to'])) $row['to'] = str_replace($vowels,'',$row['to']);
+			if (isset($row['address'])) $row['address'] = str_replace($vowels,'',$row['address']);
+			if (isset($row['from'])) $row['from'] = str_replace($vowels,'',$row['from']);
+            if (isset($row['to'])) $row['to'] = trim($row['to'],', ');
             if (isset($row['address'])) $row['address'] = trim($row['address'],', ');
-            if (isset($row['from'])) $row['from'] = str_replace('город Санкт-Петербург,','',$row['from']);
-            if (isset($row['from'])) $row['from'] = str_replace('Санкт-Петербург,','',$row['from']);
-            if (isset($row['from'])) $row['from'] = str_replace('Россия','',$row['from']);
             if (isset($row['from'])) $row['from'] = trim($row['from'],',');
+
 			if (isset($row['ready'])) $row['ready'] = substr($row['ready'],0,5);
 			if (isset($row['to_time'])) $row['to_time'] = substr($row['to_time'],0,5);
 			if (isset($row['to_time_end'])) $row['to_time_end'] = substr($row['to_time_end'],0,5);
@@ -476,7 +480,11 @@ class ordersModel extends module_model {
 	public function getLogistList($from, $to, $user_id = 0) {
 		$sql = 'SELECT o.id, 
                       (CASE 
-					        WHEN o.id_address = 0 THEN o.address_new
+					        WHEN o.id_address = 0 THEN 
+					          CASE 
+                                    WHEN o.address_new = \'\' THEN o.`from`
+                                    ELSE ua.address
+                                END
 					        ELSE ua.address
 					    END) AS address,
                        ua.comment addr_comment, 
