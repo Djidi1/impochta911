@@ -50,12 +50,10 @@
                         <div class="panel-body">
                             <input id="order_id" type="hidden" name="order_id" value="{order/id}"/>
                             <input id="id_user" type="hidden" name="id_user" value="{order/id_user}"/>
-                            <div class="row">
-                                <div class="col-sm-2 col-xs-3">
-                                    <label>Когда:</label>
-                                </div>
-                                <div class="col-sm-3 col-xs-9">
-                                    <input class="form-control date-picker" type="text" name="date" onkeyup="check_user(this)" value="{order/date}" size="30" required="">
+                            <div class="input-group" style="width:100%">
+                                <div class="form-control" style="width: 30%;">
+                                    <span class="order-add-title text-info">Дата заказа</span>
+                                    <input class="date-picker order-route-data" type="text" name="date" onkeyup="check_user(this)" value="{order/date}" required="">
                                         <xsl:if test="not(order/date)">
                                             <xsl:attribute name="value">
                                                 <xsl:value-of select="@today"/>
@@ -63,33 +61,31 @@
                                         </xsl:if>
                                     </input>
                                 </div>
-                                <div class="col-sm-2 col-xs-3">
-                                    <label>Откуда:</label>
+                                <div class="form-control" style="width: 50%;">
+                                    <span class="order-add-title text-info">Откуда</span>
+                                    <select class="order-route-data store_address js-store_address" name="store_id">
+                                        <xsl:for-each select="stores/item">
+                                            <option value="{id}">
+                                                <xsl:if test="id = //order/id_address">
+                                                    <xsl:attribute name="selected">selected
+                                                    </xsl:attribute>
+                                                </xsl:if>
+                                                <xsl:value-of select="address"/>
+                                            </option>
+                                        </xsl:for-each>
+                                    </select>
                                 </div>
-                                <div class="col-sm-5 col-xs-9">
-                                    <div class="btn-group" style="width: 100%;">
-                                        <select class="form-control btn btn-default store_address js-store_address" name="store_id" style="width: 60%;">
-                                            <xsl:for-each select="stores/item">
-                                                <option value="{id}">
-                                                    <xsl:if test="id = //order/id_address">
-                                                        <xsl:attribute name="selected">selected
-                                                        </xsl:attribute>
-                                                    </xsl:if>
-                                                    <xsl:value-of select="address"/>
-                                                </option>
-                                            </xsl:for-each>
-                                        </select>
-                                        <div class="funkyradio btn btn-default" style="padding: 0; width: 40%;">
-                                            <div class="funkyradio-info">
-                                                <input type="checkbox" id="checkbox_hand_write" value="1" onchange="$(this).closest('form').find('.hand_write').toggle();">
-                                                    <xsl:if test="order/id_address = 0">
-                                                        <xsl:attribute name="checked"/>
-                                                    </xsl:if>
-                                                </input>
-                                                <label for="checkbox_hand_write" style="margin: 0;border: 0;">
-                                                    <span>Ручной ввод</span>
-                                                </label>
-                                            </div>
+                                <div class="form-control" style="width: 20%;">
+                                    <div class="funkyradio">
+                                        <div class="funkyradio-info">
+                                            <input type="checkbox" id="checkbox_hand_write" value="1" onchange="$(this).closest('form').find('.hand_write').toggle(); $(this).closest('form').find('.store_address').toggle();$(this).closest('form').find('.store_address').parent().find('.order-add-title').toggle();">
+                                                <xsl:if test="order/id_address = 0">
+                                                    <xsl:attribute name="checked"/>
+                                                </xsl:if>
+                                            </input>
+                                            <label for="checkbox_hand_write" style="margin: 0;border: 0;">
+                                                <span>Ручной ввод</span>
+                                            </label>
                                         </div>
                                     </div>
                                 </div>

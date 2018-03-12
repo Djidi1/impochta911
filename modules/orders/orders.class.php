@@ -786,7 +786,7 @@ class ordersProcess extends module_process {
                 foreach ($stores as $store){
                     $opt .= '<option value="'.$store['id'].'">'.$store['address'].'</option>';
                 }
-                $opt .= '<option value="0" style="color:maroon;">Ручной ввод</option>';
+//                $opt .= '<option value="0" style="color:maroon;">Ручной ввод</option>';
                 $items = $this->nModel->getUserParams($user_id);
                 $items['opts'] = $opt;
                 echo json_encode($items);
