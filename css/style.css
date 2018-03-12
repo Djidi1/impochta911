@@ -258,8 +258,20 @@ DIV.delivery_sum_title {
 
 .modal-dialog {z-index: 10000;}
 
-@media (max-width: 768px) {
+.form_goods {width: 20% !important;}
+.form_goods_count {width: 10% !important;}
+.money_to {width: 15% !important;}
+.price_route {width: 15% !important;}
 
+@media (max-width: 768px) {
+    .form_goods {width: 70% !important;}
+    .form_goods_count {width: 30% !important;}
+    .money_to {width: 30% !important;}
+    .price_route {width: 30% !important;}
+
+    .btn-group>.btn { width: 50%; }
+
+    div.map-form { padding: 0 15px;}
     /* Главная страница */
    /* .main {width: 92%;}*/
     .slogan {
@@ -275,7 +287,7 @@ DIV.delivery_sum_title {
     .phone-in-header.phone {display: none}
     .moduletable_LoginForm.navbar-right {display: none}
     .phone-mobile {display: block; padding: 0;color: #2d3e50;}
-    .login-mobile {display: block; float: left;     border: 1px solid #46b8da; background: #5bc0de; border-radius: 4px; padding: 0 6px;width: 120px; overflow: hidden;}
+    .login-mobile {display: block; float: left; border: 1px solid #46b8da; background: #5bc0de; border-radius: 4px; padding: 0 6px; overflow: hidden;}
     .login-mobile ul {margin: 0;}
     .login-mobile a {color: white;    padding: 4px !important;}
     .login-mobile .nav .open>a,

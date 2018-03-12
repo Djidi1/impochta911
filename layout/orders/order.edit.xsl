@@ -3,7 +3,8 @@
     <xsl:template match="container[@module = 'order']">
         <xsl:variable name="no_edit">
             <xsl:if test="(order/id > 0) and (/page/body/module[@name='CurentUser']/container/group_id = 2
-                                        and /page/body/module[@name='orders']/container/routes/item/status_id != 1)">1</xsl:if>
+                                        and /page/body/module[@name='orders']/container/routes/item/status_id != 1)">1
+            </xsl:if>
         </xsl:variable>
 
         <!--group_id<xsl:value-of select="/page/body/module[@name='CurentUser']/container/group_id"/><br/>-->
@@ -18,9 +19,12 @@
                         <div class="panel-heading">
                             <div class="row">
                                 <div class="col-sm-5">
-                                    <strong>Заказ № <xsl:value-of select="order/id"/>
-                                    </strong>
-                                    <br/>
+                                    <xsl:if test="order/id > 0">
+                                        <strong>Заказ №
+                                            <xsl:value-of select="order/id"/>
+                                        </strong>
+                                        <br/>
+                                    </xsl:if>
                                     <span class="his_time_now"/>
                                     <input type="hidden" id="time_now" value="{@time_now}"/>
                                 </div>
@@ -47,10 +51,10 @@
                             <input id="order_id" type="hidden" name="order_id" value="{order/id}"/>
                             <input id="id_user" type="hidden" name="id_user" value="{order/id_user}"/>
                             <div class="row">
-                                <div class="col-sm-2 col-xs-4">
+                                <div class="col-sm-2 col-xs-3">
                                     <label>Когда:</label>
                                 </div>
-                                <div class="col-sm-3 col-xs-8">
+                                <div class="col-sm-3 col-xs-9">
                                     <input class="form-control date-picker" type="text" name="date" onkeyup="check_user(this)" value="{order/date}" size="30" required="">
                                         <xsl:if test="not(order/date)">
                                             <xsl:attribute name="value">
@@ -59,36 +63,42 @@
                                         </xsl:if>
                                     </input>
                                 </div>
-                                <div class="col-sm-2 col-xs-4">
+                                <div class="col-sm-2 col-xs-3">
                                     <label>Откуда:</label>
                                 </div>
-                                <div class="col-sm-5 col-xs-8">
-                                    <select class="form-control store_address js-store_address" name="store_id">
-                                        <xsl:for-each select="stores/item">
-                                            <option value="{id}">
-                                                <xsl:if test="id = //order/id_address">
-                                                    <xsl:attribute name="selected">selected
-                                                    </xsl:attribute>
-                                                </xsl:if>
-                                                <xsl:value-of select="address"/>
-                                            </option>
-                                        </xsl:for-each>
-                                        <option value="0" style="color:maroon;">
-                                            <xsl:if test="order/id_address = 0">
-                                                <xsl:attribute name="selected">selected</xsl:attribute>
-                                            </xsl:if>
-                                            Ручной ввод
-                                        </option>
-                                    </select>
+                                <div class="col-sm-5 col-xs-9">
+                                    <div class="btn-group" style="width: 100%;">
+                                        <select class="form-control btn btn-default store_address js-store_address" name="store_id" style="width: 60%;">
+                                            <xsl:for-each select="stores/item">
+                                                <option value="{id}">
+                                                    <xsl:if test="id = //order/id_address">
+                                                        <xsl:attribute name="selected">selected
+                                                        </xsl:attribute>
+                                                    </xsl:if>
+                                                    <xsl:value-of select="address"/>
+                                                </option>
+                                            </xsl:for-each>
+                                        </select>
+                                        <div class="funkyradio btn btn-default" style="padding: 0; width: 40%;">
+                                            <div class="funkyradio-info">
+                                                <input type="checkbox" id="checkbox_hand_write" value="1" onchange="$(this).closest('form').find('.hand_write').toggle();">
+                                                    <xsl:if test="order/id_address = 0">
+                                                        <xsl:attribute name="checked"/>
+                                                    </xsl:if>
+                                                </input>
+                                                <label for="checkbox_hand_write" style="margin: 0;border: 0;">
+                                                    <span>Ручной ввод</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="row hand_write">
+                            <div class="hand_write">
                                 <xsl:if test="count(order/id_address) = 0 or order/id_address > 0">
                                     <xsl:attribute name="style">display:none</xsl:attribute>
                                 </xsl:if>
-                                <div class="col-sm-12">
-                                    <xsl:call-template name="from_address"/>
-                                </div>
+                                <xsl:call-template name="from_address"/>
                             </div>
                             <div class="row">
                                 <xsl:if test="order/id > 0">
@@ -113,45 +123,12 @@
                                         </select>
                                     </div>
                                 </xsl:if>
-                                <!--<div class="col-sm-2">-->
-                                    <!--<label>Готовность:</label>-->
-                                <!--</div>-->
-                                <!--<div class="col-sm-4">-->
-                                    <!--<input class="form-control time-picker" type="text" name="ready" onkeyup="check_user(this)" value="{order/ready}" size="30" required=""/>-->
-                                <!--</div>-->
-                                <!--<div class="col-sm-2">-->
-                                <!--</div>-->
-                                <!--<div class="col-sm-4 col-xs-12">-->
-                                    <!--<label class="btn btn-default">-->
-                                        <!--<input type="checkbox" id="target" name="target" value="1" onchange="calc_route(1); target_time_show()">-->
-                                            <!--<xsl:if test="order/target = 1">-->
-                                                <!--<xsl:attribute name="checked"/>-->
-                                            <!--</xsl:if>-->
-                                        <!--</input> доставка к точному времени</label>-->
-                                <!--</div>-->
                             </div>
-                            <!--<div class="row">-->
-                                <!--<div class="col-sm-2">-->
-                                    <!--<label>Статус:</label>-->
-                                <!--</div>-->
-                                <!--<div class="col-sm-4">-->
-                                    <!--<div class="form-control">-->
-                                        <!--<i>-->
-                                            <!--<xsl:value-of select="routes/item[1]/status"/>-->
-                                        <!--</i>-->
-                                        <!--<xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1 and order/id > 0">-->
-                                            <!--<span title="Изменить статус" class="btn btn-warning btn-xs chg-status" onclick="chg_status({order/id})" style="float:right;">-->
-                                                <!--<span class="glyphicon glyphicon-flag" aria-hidden="true"/>-->
-                                            <!--</span>-->
-                                        <!--</xsl:if>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-
-                            <!--</div>-->
                             <hr/>
                             <label>Адреса доставки:</label>
                             <xsl:if test="@is_single != 1 and $no_edit != 1">
-                                <button type="button" class="btn-clone btn btn-xs btn-success" title="Добавить адрес" onclick="clone_div_row($('.routes-block').last())" style="float:right; display:none">
+                                <button type="button" class="btn-clone btn btn-xs btn-success" title="Добавить адрес" onclick="clone_div_row($('.routes-block').last())"
+                                        style="float:right; display:none">
                                     <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
                                         <xsl:attribute name="style">float:right;</xsl:attribute>
                                     </xsl:if>
@@ -164,39 +141,39 @@
                             <xsl:call-template name="adresses">
                                 <xsl:with-param name="no_edit" select="$no_edit"/>
                             </xsl:call-template>
-                            <!--<label>Дополнительная информация:</label>-->
-                            <!--<textarea class="form-control" name="order_comment" placeholder="Комментарий к заказу" title="Комментарий к заказу">-->
-                                <!--<xsl:value-of select="order/comment"/>-->
-                            <!--</textarea>-->
-                            <!--<font color="red">* Поля обязательны для заполнения.</font>-->
                         </div>
                         <div class="panel-footer">
                             <div class="btn-group" style="width: 100%;">
-                                    <a href="/" class="btn btn-warning"><span class="glyphicon glyphicon-circle-arrow-left"/> Выйти без сохранения</a>
+                                <a href="/" class="btn btn-warning">Выйти без сохранения</a>
                                 <xsl:if test="(order/id > 0)">
                                     <span class="btn btn-primary" onclick="print_window({order/id})">Распечатать накладную</span>
                                     <script>
                                         function print_window(order_id) {
-                                            window.open('/orders/naklad-'+order_id+'/', 'Накладная к заказу №'+order_id+'');
+                                        window.open('/orders/naklad-'+order_id+'/', 'Накладная к заказу №'+order_id+'');
                                         }
                                     </script>
                                 </xsl:if>
                                 <xsl:if test="not(order/id > 0)">
-                                    <span class="btn btn-primary disabled" onclick="bootbox.alert('Распечатать накладную можно будет после сохранения заказа')" title="Распечатать накладную можно будет после сохранения заказа" style="pointer-events: all;">Распечатать накладную</span>
+                                    <span class="btn btn-primary disabled" onclick="bootbox.alert('Распечатать накладную можно будет после сохранения заказа')"
+                                          title="Распечатать накладную можно будет после сохранения заказа" style="pointer-events: all;">Распечатать накладную
+                                    </span>
                                 </xsl:if>
                                 <xsl:if test="$no_edit != 1">
-                                        <span class="btn btn-info calc_route" onclick="calc_route(1)">Рассчитать маршрут</span>
-                                        <input class="btn btn-success btn-submit" type="button" value="Сохранить заказ" onclick="return test_time_all_routes()"/>
+                                    <span class="btn btn-info calc_route" onclick="calc_route(1)">Рассчитать маршрут</span>
+                                    <input class="btn btn-success btn-submit" type="button" value="Сохранить заказ" onclick="return test_time_all_routes()"/>
                                 </xsl:if>
                             </div>
                             <br/>
                             <xsl:if test="$no_edit = 1">
                                 <div class="alert alert-warning" style="margin: 0 15px">
-                                    Если вы хотетите отредактировать или отменить заказ свяжитесь, пожалуйста, с оператором по телефону: <b>407-24-52</b>
+                                    Если вы хотетите отредактировать или отменить заказ свяжитесь, пожалуйста, с оператором по телефону:
+                                    <b>407-24-52</b>
                                 </div>
                             </xsl:if>
                             <xsl:if test="order/dk">
-                                <div style="text-align:right" class="small text-muted">Изменен: <xsl:value-of select="order/dk"/></div>
+                                <div style="text-align:right" class="small text-muted">Изменен:
+                                    <xsl:value-of select="order/dk"/>
+                                </div>
                             </xsl:if>
                         </div>
                     </div>
@@ -216,7 +193,8 @@
             </form>
             <div style="display:none">
                 <xsl:for-each select="g_price/item">
-                    <input id="g_price_{id}" class="g_prices" type="hidden" value="{value}" goods_id="{goods_id}" condition="{condition}" price="{price}" fixed="{fixed}" mult="{mult}" rel="{goods_name}"/>
+                    <input id="g_price_{id}" class="g_prices" type="hidden" value="{value}" goods_id="{goods_id}" condition="{condition}" price="{price}" fixed="{fixed}" mult="{mult}"
+                           rel="{goods_name}"/>
                 </xsl:for-each>
                 <xsl:for-each select="prices/item">
                     <input id="km_{id}" class="km_cost" type="hidden" value="{km_cost}" km_from="{km_from}" km_to="{km_to}"/>
@@ -238,47 +216,45 @@
         <input id="order_id" type="hidden" value="{order/id}"/>
         <script>
             $('FORM').on('keyup keypress', function(e) {
-                var keyCode = e.keyCode || e.which;
-                if (keyCode === 13) { e.preventDefault(); return false; }
+            var keyCode = e.keyCode || e.which;
+            if (keyCode === 13) { e.preventDefault(); return false; }
             });
             $('input, select').on('change', function() {
-                $('#order_edited').val(1);
+            $('#order_edited').val(1);
             });
             $('select.to_time_ready, select.to_time_ready_end, select.to_time, select.to_time_end, select.to_time_target').on('change', function() {
-                $('#time_edited').val(1);
+            $('#time_edited').val(1);
             });
         </script>
     </xsl:template>
 
     <xsl:template name="from_address">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="input-group from-block" rel="{position()}" style="width: 100%;">
-                    <div class="form-control" style="width: 80%;">
-                        <span class="order-add-title text-info">Адрес отправления</span>
-                        <input type="search" class="order-route-data spb-streets" name="from[]" title="Улица, проспект и т.д." value="{order/from}" onchange="" autocomplete="off" required="" coord="{order/from_coord}"/>
-                        <input type="hidden" class="coord" name="from_coord[]" value="{order/from_coord}"/>
-                    </div>
-                    <div class="form-control" style="width: 20%;">
-                        <span class="order-add-title text-info">кв/офис/помещ</span>
-                        <input type="text" class="order-route-data number" name="from_appart[]" title="Квартира" value="{order/from_appart}" required=""/>
-                    </div>
-
-                    <div class="form-control" style="width: 50%;">
-                        <span class="order-add-title text-warning">Отправитель ФИО</span>
-                        <input type="text" class="order-route-data" name="from_fio[]" title="Отправитель" value="{order/from_fio}" onkeyup="$('[name=user_fio]').val($(this).val())" required=""/>
-                    </div>
-                    <div class="form-control" style="width: 50%;">
-                        <span class="order-add-title text-warning">
-                            Телефон отправителя
-                        </span>
-                        <input type="text" class="order-route-data phone-number" name="from_phone[]" title="Телефон отправителя" value="{order/from_phone}" onkeyup="$('[name=user_phone]').val($(this).val())" required=""/>
-                    </div>
-                    <textarea name="from_comment[]" class="form-control" title="Комментарий" placeholder="Примечания к адресу"  style="width: 100%;">
-                        <xsl:value-of select="order/from_comment"/>
-                    </textarea>
-                </div>
+        <div class="input-group from-block" rel="{position()}">
+            <div class="form-control" style="width: 80%;">
+                <span class="order-add-title text-info">Адрес отправления</span>
+                <input type="search" class="order-route-data spb-streets" name="from[]" title="Улица, проспект и т.д." value="{order/from}" onchange="" autocomplete="off" required=""
+                       coord="{order/from_coord}"/>
+                <input type="hidden" class="coord" name="from_coord[]" value="{order/from_coord}"/>
             </div>
+            <div class="form-control" style="width: 20%;">
+                <span class="order-add-title text-info">кв/офис/помещ</span>
+                <input type="text" class="order-route-data number" name="from_appart[]" title="Квартира" value="{order/from_appart}" required=""/>
+            </div>
+
+            <div class="form-control" style="width: 50%;">
+                <span class="order-add-title text-warning">Отправитель ФИО</span>
+                <input type="text" class="order-route-data" name="from_fio[]" title="Отправитель" value="{order/from_fio}" onkeyup="$('[name=user_fio]').val($(this).val())" required=""/>
+            </div>
+            <div class="form-control" style="width: 50%;">
+                <span class="order-add-title text-warning">
+                    Телефон отправителя
+                </span>
+                <input type="text" class="order-route-data phone-number" name="from_phone[]" title="Телефон отправителя" value="{order/from_phone}"
+                       onkeyup="$('[name=user_phone]').val($(this).val())" required=""/>
+            </div>
+            <textarea name="from_comment[]" class="form-control" title="Комментарий" placeholder="Примечания к адресу" style="width: 100%;">
+                <xsl:value-of select="order/from_comment"/>
+            </textarea>
         </div>
     </xsl:template>
 
@@ -299,25 +275,17 @@
             </span>
             <div class="form-control" style="width: 80%;">
                 <span class="order-add-title text-info">Адрес доставки</span>
-                <input type="search" class="order-route-data spb-streets" name="to[]" title="Улица, проспект и т.д." value="{to}" onchange="calc_route(1)" autocomplete="off" required="" coord="{to_coord}">
+                <input type="search" class="order-route-data spb-streets" name="to[]" title="Улица, проспект и т.д." value="{to}" onchange="calc_route(1)" autocomplete="off" required=""
+                       coord="{to_coord}">
                     <xsl:attribute name="value">
-                        <xsl:value-of select="to"/><xsl:if test="to_house != ''">, д.<xsl:value-of select="to_house"/></xsl:if>
+                        <xsl:value-of select="to"/>
+                        <xsl:if test="to_house != ''">, д.<xsl:value-of select="to_house"/>
+                        </xsl:if>
                     </xsl:attribute>
                 </input>
                 <input type="hidden" class="coord" name="to_coord[]" value="{to_coord}"/>
             </div>
-            <!--
-            <div class="form-control" style="width: 20%;">
-                <span class="order-add-title text-info">дом/корп/строение</span>
-                <select type="text" class="order-route-data to_house number" name="to_house[]" title="Дом" value="{to_house}" onchange="calc_route(1)" autocomplete="off" required="" AOGUID="{to_AOGUID}">
-                    <option value="{to_house}"><xsl:value-of select="to_house"/></option>
-                </select>
-            </div>
-            -->
-            <div class="form-control" style="width: 15%; display:none">
-                <span class="order-add-title text-info">корп/строение</span>
-                <input type="text" class="order-route-data to_corpus number" name="to_corpus[]" title="Корпус" value="{to_corpus}" onchange="calc_route(1)"/>
-            </div>
+
             <div class="form-control" style="width: 20%;">
                 <span class="order-add-title text-info">кв/офис/помещ</span>
                 <input type="text" class="order-route-data number" name="to_appart[]" title="Квартира" value="{to_appart}" required=""/>
@@ -329,9 +297,7 @@
                 <input type="text" class="order-route-data" name="to_fio[]" title="Получатель" value="{to_fio}" required=""/>
             </div>
             <div class="form-control" style="width: 30%;">
-                <span class="order-add-title text-warning">
-                    Телефон получателя
-                </span>
+                <span class="order-add-title text-warning">Телефон получателя</span>
                 <input type="text" class="order-route-data" name="to_phone[]" title="Телефон получателя" value="{to_phone}" required=""/>
             </div>
             <div class="form-control" style="width: 30%;">
@@ -339,12 +305,14 @@
                 </span>
                 <div class="funkyradio">
                     <div class="funkyradio-success">
-                        <input type="checkbox" id="checkbox_{position()}" class="target" name="target" value="1" onchange="calc_route(1); target_time_show()" >
+                        <input type="checkbox" id="checkbox_{position()}" class="target" name="target" value="1" onchange="calc_route(1); target_time_show()">
                             <xsl:if test="../../order/target = 1">
                                 <xsl:attribute name="checked"/>
                             </xsl:if>
                         </input>
-                        <label for="checkbox_{position()}"><span>К точному времени</span></label>
+                        <label for="checkbox_{position()}">
+                            <span>К точному времени</span>
+                        </label>
                     </div>
                 </div>
                 <label style="width:100%; text-align:center">
@@ -356,7 +324,7 @@
                 </label>
             </div>
 
-<!-- Строка времени -->
+            <!-- Строка времени -->
 
             <div class="form-control" style="width: 25%;">
                 <span class="order-add-title text-danger">
@@ -428,14 +396,14 @@
                     <xsl:with-param name="select_onchange">test_time_routes_add()</xsl:with-param>
                 </xsl:call-template>
             </div>
-<!-- Строка оплаты -->
-            <div class="form-control" style="width: 20%;">
+            <!-- Строка оплаты -->
+            <div class="form-control form_goods">
                 <span class="order-add-title text-success">
                     Что доставляем?
                 </span>
                 <select class="order-route-data goods_type" name="goods_type[]" title="Тип товара" onchange="calc_route(1);" required="">
                     <xsl:variable name="goods_type" select="goods_type"/>
-                    <option value=""> </option>
+                    <option value=""></option>
                     <xsl:for-each select="../../goods/item">
                         <option value="{goods_id}">
                             <xsl:if test="goods_id = $goods_type">
@@ -446,19 +414,20 @@
                     </xsl:for-each>
                 </select>
             </div>
-            <div class="form-control" style="width: 10%;">
+            <div class="form-control form_goods_count">
                 <span class="order-add-title text-success">
                     Кол-во
                 </span>
                 <input type="number" class="order-route-data number goods_val" name="goods_val[]" title="Количество товара" value="{goods_val}" onchange="calc_route(1);" min="0" required=""/>
             </div>
-            <div class="form-control" style="width: 15%;" title="Общая сумма наличных, которую необходимо забрать у получателя, включая  цену доставки если ее оплачивает получатель.">
+
+            <div class="form-control money_to" style="width: 15%;" title="Общая сумма наличных, которую необходимо забрать у получателя, включая  цену доставки если ее оплачивает получатель.">
                 <span class="order-add-title text-success">
                     ₽ от получателя
                 </span>
                 <input type="number" class="order-route-data number cost_tovar" name="cost_tovar[]" value="{cost_tovar}" onchange="re_calc(this)" min="0" required=""/>
             </div>
-            <div class="form-control" style="width: 15%;">
+            <div class="form-control price_route" style="width: 15%;">
                 <span class="order-add-title text-success">
                     Цена доставки
                 </span>
@@ -484,7 +453,7 @@
                     Способ оплаты доставки
                 </span>
                 <xsl:if test="//@user_pay_type > 0">
-                    <input type="hidden" name="pay_type[]" value="{//@user_pay_type}" />
+                    <input type="hidden" name="pay_type[]" value="{//@user_pay_type}"/>
                 </xsl:if>
                 <select class="order-route-data pay_type" name="pay_type[]" onchange="re_calc(this)" required="">
                     <xsl:if test="//@user_pay_type > 0">
@@ -492,7 +461,7 @@
                     </xsl:if>
                     <xsl:variable name="pay_type" select="pay_type_id"/>
                     <xsl:variable name="user_pay_type" select="//@user_pay_type"/>
-                    <option value=""> </option>
+                    <option value=""></option>
                     <xsl:for-each select="../../pay_types/item">
                         <option value="{id}">
                             <xsl:if test="id = $pay_type or (not($pay_type) and $user_pay_type = id)">
@@ -508,14 +477,17 @@
                     Общая сумма
                 </span>
                 <input type="text" class="order-route-data number cost_all" title="Инкассация" disabled="">
-                <xsl:if test="string(number(cost_route)+number(cost_tovar)) != 'NaN'">
-                    <xsl:attribute name="value">
-                        <xsl:value-of select="(number(cost_route)+number(cost_tovar))"/>
-                    </xsl:attribute>
-                </xsl:if>
+                    <xsl:if test="string(number(cost_route)+number(cost_tovar)) != 'NaN'">
+                        <xsl:attribute name="value">
+                            <xsl:value-of select="(number(cost_route)+number(cost_tovar))"/>
+                        </xsl:attribute>
+                    </xsl:if>
                 </input>
             </div>
-            <textarea name="comment[]" class="form-control" title="Комментарий" placeholder="Примечания к заказу"  style="width: 80%;">
+            <textarea name="comment[]" class="form-control" title="Комментарий" placeholder="Примечания к заказу">
+                <xsl:if test="../../order/id > 0">
+                    <xsl:attribute name="style">width: 80%;</xsl:attribute>
+                </xsl:if>
                 <xsl:value-of select="comment"/>
             </textarea>
 
@@ -525,37 +497,37 @@
                         Статус
                     </span>
 
-                        <select class="order-route-data" name="status[]" title="Статус заказа">
-                            <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 2 and status_id != 1">
-                                <xsl:attribute name="disabled">disabled</xsl:attribute>
-                            </xsl:if>
-                            <xsl:variable name="status_id" select="status_id"/>
-                            <xsl:choose>
-                                <xsl:when test="/page/body/module[@name='CurentUser']/container/group_id = 2 and status_id = 1">
-                                    <xsl:for-each select="../../statuses/item">
-                                        <!-- Либо Новый либо отмена -->
-                                        <xsl:if test="id = 1 or id = 5">
-                                            <option value="{id}">
-                                                <xsl:if test="id = $status_id">
-                                                    <xsl:attribute name="selected">selected</xsl:attribute>
-                                                </xsl:if>
-                                                <xsl:value-of select="status"/>
-                                            </option>
-                                        </xsl:if>
-                                    </xsl:for-each>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:for-each select="../../statuses/item">
+                    <select class="order-route-data" name="status[]" title="Статус заказа">
+                        <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 2 and status_id != 1">
+                            <xsl:attribute name="disabled">disabled</xsl:attribute>
+                        </xsl:if>
+                        <xsl:variable name="status_id" select="status_id"/>
+                        <xsl:choose>
+                            <xsl:when test="/page/body/module[@name='CurentUser']/container/group_id = 2 and status_id = 1">
+                                <xsl:for-each select="../../statuses/item">
+                                    <!-- Либо Новый либо отмена -->
+                                    <xsl:if test="id = 1 or id = 5">
                                         <option value="{id}">
                                             <xsl:if test="id = $status_id">
                                                 <xsl:attribute name="selected">selected</xsl:attribute>
                                             </xsl:if>
                                             <xsl:value-of select="status"/>
                                         </option>
-                                    </xsl:for-each>
-                                </xsl:otherwise>
-                            </xsl:choose>
-                        </select>
+                                    </xsl:if>
+                                </xsl:for-each>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:for-each select="../../statuses/item">
+                                    <option value="{id}">
+                                        <xsl:if test="id = $status_id">
+                                            <xsl:attribute name="selected">selected</xsl:attribute>
+                                        </xsl:if>
+                                        <xsl:value-of select="status"/>
+                                    </option>
+                                </xsl:for-each>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </select>
                 </div>
             </xsl:if>
 
