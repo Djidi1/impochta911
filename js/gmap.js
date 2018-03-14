@@ -97,6 +97,9 @@ function ArrayToCoords(arr){
 }
 
 function calc_route(recalc_cost, dest_point) {
+	// Снимаем блокировку кнопки при перерасчете маршрута
+    $('input.btn-submit').prop('disabled', false);
+	
     // Удаляем старые маршруты
     $.each(order_route, function () {
         this.setMap(null);
@@ -134,7 +137,7 @@ function calc_route(recalc_cost, dest_point) {
         return false;
     }
     // Начальная точка маршрута
-    var origin_point = ($("SELECT.store_address").val() !== '0')?$("SELECT.store_address option:selected").text():$('INPUT.store_address_new').val();
+    var origin_point = (!$('#checkbox_hand_write').prop('checked'))?$("SELECT.store_address option:selected").text():'';
     // Конечная точка маршрута
     // Исклюаем конечную точку маршрута из промежуточных
     var destination_point = way_points.pop();
@@ -313,7 +316,7 @@ function calc_route(recalc_cost, dest_point) {
                             ? (parseFloat(cost_km) + parseFloat(cost_Neva))
                             : fixprice_inside;
 
-                        if (parseFloat(cost_in_spb) > parseFloat(maxprice_inside)) {
+                        if (parseFloat(cost_in_spb) > parseFloat(maxprice_inside) && parseFloat(maxprice_inside) != 0) {
                             cost_in_spb = maxprice_inside;
                         }
 

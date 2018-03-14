@@ -31,10 +31,29 @@ class ordersModel extends module_model {
 			if (isset($row['to_time_ready'])) $row['to_time_ready'] = substr($row['to_time_ready'],0,5);
 			if (isset($row['to_time_ready_end'])) $row['to_time_ready_end'] = substr($row['to_time_ready_end'],0,5);
             if (isset($row['date'])) $row['date'] = $this->dateToRuFormat($row['date']);
+            if (isset($row['from_phone'])) $row['from_phone'] = $this->formatPhoneNumber($row['from_phone']);
+            if (isset($row['to_phone'])) $row['to_phone'] = $this->formatPhoneNumber($row['to_phone']);
+//            if (isset($row['phone'])) $row['phone'] = $this->formatPhoneNumber($row['phone']).' - '.$row['phone'];
 			$items[] = $row;
 		}
 		return $items;
 	}
+
+    public function formatPhoneNumber($phone){
+        $phone = preg_replace("/[^0-9]/", "", ($phone) );
+        return '+7'.substr($phone,1,10);
+    }
+
+    public function formatPhoneNumber8($phone){
+        $phone = preg_replace("/[^0-9]/", "", ($phone) );
+        return '8'.substr($phone,1,10);
+    }
+
+    public function getUserId($phone){
+        $sql = "SELECT id FROM users WHERE phone = '$phone'";
+        $this->query($sql);
+        return $this->getOne();
+    }
 
 	public function exportToExcel($titles,$orders){
         require_once CORE_ROOT . 'classes/PHPExcel.php';
@@ -161,10 +180,19 @@ class ordersModel extends module_model {
 		return $this->get_assoc_array($sql);
 	}
     public function getUsers($uid) {
-        $sql = "SELECT id, name, title, pay_type
+        $sql = "SELECT u.id, u.name, u.phone, u.title, u.pay_type, a.`from`, a.from_appart, a.from_comment
                 FROM users u
-                 LEFT JOIN groups_user g ON u.id = g.user_id
-                 WHERE u.isban < 1 and (g.group_id = 2 or u.id = $uid)";
+                LEFT JOIN groups_user g ON u.id = g.user_id
+                LEFT JOIN  
+                  (SELECT id_user, `from`, from_appart, from_comment, COUNT(id)
+                  FROM orders
+                  WHERE `from` IS NOT NULL
+                  GROUP BY id_user, `from`, from_appart
+                  ORDER BY COUNT(id) DESC
+                  LIMIT 1) AS a ON a.id_user = u.id
+                WHERE u.isban < 1 and (g.group_id = 2 or u.id = $uid)
+                 AND (name <> '' OR phone <> '')
+                 ORDER BY u.title";
         return $this->get_assoc_array($sql);
     }
     public function getUserParams($uid) {
@@ -263,10 +291,12 @@ class ordersModel extends module_model {
     public function getOrderInfo($order_id) {
         $sql = 'SELECT o.id,
                       (CASE 
-					        WHEN o.id_address = 0 THEN o.address_new
+					        WHEN o.id_address = 0 THEN o.from
 					        ELSE ua.address
 					    END) AS `from`,
 					   ua.comment from_comment,
+					   o.from_fio, 
+					   o.from_phone,
                        u.inkass_proc,
                        o.id_car,
 					   o.ready,
@@ -480,11 +510,7 @@ class ordersModel extends module_model {
 	public function getLogistList($from, $to, $user_id = 0) {
 		$sql = 'SELECT o.id, 
                       (CASE 
-					        WHEN o.id_address = 0 THEN 
-					          CASE 
-                                    WHEN o.address_new = \'\' THEN o.`from`
-                                    ELSE ua.address
-                                END
+					        WHEN o.id_address = 0 THEN o.`from`
 					        ELSE ua.address
 					    END) AS address,
                        ua.comment addr_comment, 
@@ -637,6 +663,19 @@ class ordersModel extends module_model {
 	    $this->query($sql);
     }
 
+    public function createUser($name, $phone, $desc){
+        $user_id = 0;
+        $sql = "INSERT INTO users (name, email, login, pass, date_reg, isban, prior, title, phone, phone_mess, fixprice_inside, inkass_proc, pay_type, sms_id, `desc`, send_sms) 
+                VALUES ('$name','','$phone','',NOW(),'0','0','$name','$phone','','','','','','$desc', 1)";
+        $test = $this->query($sql);
+        if ($test) {
+            $user_id = $this->insertID();
+            $sql = "INSERT INTO `groups_user` (`group_id`, `user_id`) VALUES ('2', '$user_id')";
+            $this->query($sql);
+        }
+        return $user_id;
+    }
+
 function mydate_to_dmy($date) {
 	return date ( 'd.m.Y', strtotime ( substr ( $date, 0, 20 ) ) );
 }
@@ -786,7 +825,7 @@ class ordersProcess extends module_process {
                 foreach ($stores as $store){
                     $opt .= '<option value="'.$store['id'].'">'.$store['address'].'</option>';
                 }
-//                $opt .= '<option value="0" style="color:maroon;">Ручной ввод</option>';
+                $opt .= '<option value="0" style="color:maroon;"></option>';
                 $items = $this->nModel->getUserParams($user_id);
                 $items['opts'] = $opt;
                 echo json_encode($items);
@@ -833,7 +872,7 @@ class ordersProcess extends module_process {
             list($g_price, $goods) = $this->nModel->getGoodsPriceList();
 			$stores = $this->nModel->getStores($uid);
 			$client_title = $this->nModel->getClientTitle($uid);
-			$this->nView->viewOrderEdit ( $order, $users, $stores, $routes, $pay_types, $statuses,
+			$this->nView->viewOrderEdit ( $user_id, $order, $users, $stores, $routes, $pay_types, $statuses,
                 $car_couriers, $timer, $prices, $add_prices, $client_title, $without_menu, $is_single,
                 $user_pay_type, $user_fix_price, $user_max_price, $times, $g_price, $goods );
 		}
@@ -870,8 +909,8 @@ class ordersProcess extends module_process {
 			$params['target'] = $this->Vals->getVal ( 'target', 'POST', 'string' );
 			$params['order_comment'] = $this->Vals->getVal ( 'order_comment', 'POST', 'string' );
 
-//            $user_name = $this->Vals->getVal('user_name', 'POST', 'string');
-//            $user_phone = $this->Vals->getVal('user_phone', 'POST', 'string');
+            $user_name = $this->Vals->getVal('user_name', 'POST', 'string');
+            $user_phone = $this->Vals->getVal('user_phone', 'POST', 'string');
 
             $params['from'] = $this->Vals->getVal('from', 'POST', 'array');
             $params['from_coord'] = $this->Vals->getVal('from_coord', 'POST', 'array');
@@ -930,7 +969,14 @@ class ordersProcess extends module_process {
                     $send_message_to_client = false;
                 } else {
                     if ($group_id != 2) {
-                        $user_id = $this->Vals->getVal('new_user_id', 'POST', 'integer');
+                        $new_user_id =$this->Vals->getVal('new_user_id', 'POST', 'integer');
+                        if ($user_name != '' and $user_phone != ''){
+                            $user_phone = $this->nModel->formatPhoneNumber8($user_phone);
+                            $user_id = $this->nModel->getUserId($user_phone);
+                            $user_id = ($user_id > 0) ? $user_id : $this->nModel->createUser($user_name, $user_phone, 'Регистрация менеджером через новый заказ');
+                        }else {
+                            $user_id = $new_user_id > 0 ? $new_user_id : $user_id;
+                        }
                     }
                     if ($user_id > 0) {
                         $order_id = $this->nModel->orderInsert($user_id, $params);
@@ -1186,6 +1232,9 @@ class ordersProcess extends module_process {
         $order_info_message = "<b>Заказ №</b> " . $order_id . "\r\n";
         $order_info_message .= "<b>Дата заказа:</b> " . $order_info['date'] . "\r\n";
         $order_info_message .= "<b>Откуда:</b> " . $order_info['from'] . "\r\n";
+        if (trim($order_info['from_phone']) != '') {
+            $order_info_message .= "<b>Отправитель:</b> " . $order_info['from_fio'] . " [" . $order_info['from_phone'] . "]\r\n";
+        }
         $order_info_message .= ($order_info['from_comment'] != '')?"<i>" . $order_info['from_comment'] . "</i>\r\n\r\n":'';
         $i = 0;
         foreach ($order_routes_info as $order_route_info) {
@@ -1430,12 +1479,13 @@ class ordersView extends module_View {
 		return true;
 	}
 	
-	public function viewOrderEdit($order, $users, $stores, $routes, $pay_types,
+	public function viewOrderEdit($user_id, $order, $users, $stores, $routes, $pay_types,
                                   $statuses, $car_couriers, $timer, $prices, $add_prices,
                                   $client_title, $without_menu, $is_single, $user_pay_type,
                                   $user_fix_price, $user_max_price, $times, $g_price, $goods) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/orders/order.edit.xsl';
         $Container = $this->newContainer('order');
+        $this->addAttr('user_id', $user_id, $Container);
         $this->addAttr('today', date('d.m.Y'), $Container);
         $this->addAttr('time_now', time(), $Container);
         $this->addAttr('user_pay_type', $user_pay_type, $Container);

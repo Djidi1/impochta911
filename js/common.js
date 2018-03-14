@@ -290,12 +290,37 @@ function updUserStores(obj){
     var user_id = $(obj).val();
     $.post("/orders/get_data-userStores/", {user_id:user_id},  function(data) {
         data = JSON.parse(data);
+
+        if($('#checkbox_hand_write').prop('checked')) {
+            $('#checkbox_hand_write').click();
+        }
+
         $('SELECT.pay_type').val(data.pay_type);
         $('#user_fix_price').val(data.fixprice);
         $('.js-store_address').html(data.opts).change();
     });
 }
 
+function hand_write(obj) {
+    $(obj).closest('form').find('.hand_write').toggle();
+    $(obj).closest('form').find('.store_address').toggle();
+    $(obj).closest('form').find('.store_address').val(0);
+    $(obj).closest('form').find('.store_address').parent().find('.order-add-title').toggle();
+    var $sender = $('select[name=new_user_id] option:selected');
+    var phone = $sender.attr('phone');
+    var sender = $sender.attr('sender');
+    var from = $sender.attr('from');
+    var from_appart = $sender.attr('from_appart');
+    var from_comment = $sender.attr('from_comment');
+    $(obj).closest('form').find('input[name="from_phone[]"]').val(phone);
+    $(obj).closest('form').find('input[name="from_fio[]"]').val(sender);
+    $(obj).closest('form').find('input[name="from[]"]').val(from);
+    $(obj).closest('form').find('input[name="from_appart[]"]').val(from_appart);
+    $(obj).closest('form').find('input[name="from_comment[]"]').val(from_comment);
+
+    $(obj).closest('form').find('input[name="from[]"]').click();
+    $(obj).closest('form').find('input[name="from[]"]').focus();
+}
 
 
 function filter_table(){

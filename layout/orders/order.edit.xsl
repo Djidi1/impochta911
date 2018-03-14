@@ -35,11 +35,11 @@
                                     <xsl:if test="(/page/body/module[@name='CurentUser']/container/group_id != 2)">
                                         <select class="form-control select2" name="new_user_id" onchange="updUserStores(this)">
                                             <xsl:for-each select="users/item">
-                                                <option value="{id}">
-                                                    <xsl:if test="../../order/id_user = id">
+                                                <option value="{id}" phone="{phone}" sender="{name}" pay_type="{pay_type}" from="{from}" from_appart="{from_appart}" from_comment="{from_comment}">
+                                                    <xsl:if test="../../order/id_user = id or (not(../../order/id_user) and ../../@user_id = id)">
                                                         <xsl:attribute name="selected">selected</xsl:attribute>
                                                     </xsl:if>
-                                                    <xsl:value-of select="title"/>
+                                                    <xsl:value-of select="title"/> [<xsl:value-of select="phone"/>]
                                                 </option>
                                             </xsl:for-each>
                                         </select>
@@ -62,8 +62,13 @@
                                     </input>
                                 </div>
                                 <div class="form-control" style="width: 50%;">
-                                    <span class="order-add-title text-info">Откуда</span>
-                                    <select class="order-route-data store_address js-store_address" name="store_id">
+                                    <span class="order-add-title text-info"><xsl:if test="order/id_address = 0">
+                                                    <xsl:attribute name="style">display:none;</xsl:attribute>
+                                                </xsl:if>Откуда</span>
+                                    <select class="order-route-data store_address js-store_address" name="store_id"><xsl:if test="order/id_address = 0">
+                                                    <xsl:attribute name="style">display:none;</xsl:attribute>
+                                                </xsl:if>
+												
                                         <xsl:for-each select="stores/item">
                                             <option value="{id}">
                                                 <xsl:if test="id = //order/id_address">
@@ -73,12 +78,17 @@
                                                 <xsl:value-of select="address"/>
                                             </option>
                                         </xsl:for-each>
+										<option value="0">
+											<xsl:if test="order/id_address = 0">
+												<xsl:attribute name="selected">selected</xsl:attribute>
+											</xsl:if>
+										</option>
                                     </select>
                                 </div>
                                 <div class="form-control" style="width: 20%;">
                                     <div class="funkyradio">
                                         <div class="funkyradio-info">
-                                            <input type="checkbox" id="checkbox_hand_write" value="1" onchange="$(this).closest('form').find('.hand_write').toggle(); $(this).closest('form').find('.store_address').toggle();$(this).closest('form').find('.store_address').parent().find('.order-add-title').toggle();">
+                                            <input type="checkbox" id="checkbox_hand_write" value="1" onchange="hand_write(this)">
                                                 <xsl:if test="order/id_address = 0">
                                                     <xsl:attribute name="checked"/>
                                                 </xsl:if>
@@ -90,7 +100,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="hand_write">
+                            <div class="hand_write" style="width:100%">
                                 <xsl:if test="count(order/id_address) = 0 or order/id_address > 0">
                                     <xsl:attribute name="style">display:none</xsl:attribute>
                                 </xsl:if>
@@ -137,6 +147,22 @@
                             <xsl:call-template name="adresses">
                                 <xsl:with-param name="no_edit" select="$no_edit"/>
                             </xsl:call-template>
+
+                            <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id != 2">
+                                <label>Заказчик</label>
+                                <div class="input-group from-block" style="width:100%">
+                                    <div class="form-control" style="width: 50%;">
+                                        <span class="order-add-title text-warning">Заказчик ФИО</span>
+                                        <input type="text" class="order-route-data" name="user_name" title="Заказчик" value="{@user_name}" required=""/>
+                                    </div>
+                                    <div class="form-control" style="width: 50%;">
+                                        <span class="order-add-title text-warning">
+                                            Телефон заказчика
+                                        </span>
+                                        <input type="text" class="order-route-data phone-number" name="user_phone" title="Телефон заказчика" value="{@user_phone}" required=""/>
+                                    </div>
+                                </div>
+                            </xsl:if>
                         </div>
                         <div class="panel-footer">
                             <div class="btn-group" style="width: 100%;">
@@ -225,7 +251,7 @@
     </xsl:template>
 
     <xsl:template name="from_address">
-        <div class="input-group from-block" rel="{position()}">
+        <div class="input-group from-block" rel="{position()}"  style="width:100%">
             <div class="form-control" style="width: 80%;">
                 <span class="order-add-title text-info">Адрес отправления</span>
                 <input type="search" class="order-route-data spb-streets" name="from[]" title="Улица, проспект и т.д." value="{order/from}" onchange="" autocomplete="off" required=""
@@ -239,7 +265,7 @@
 
             <div class="form-control" style="width: 50%;">
                 <span class="order-add-title text-warning">Отправитель ФИО</span>
-                <input type="text" class="order-route-data" name="from_fio[]" title="Отправитель" value="{order/from_fio}" onkeyup="$('[name=user_fio]').val($(this).val())" required=""/>
+                <input type="text" class="order-route-data" name="from_fio[]" title="Отправитель" value="{order/from_fio}" onkeyup="$('[name=user_name]').val($(this).val())" required=""/>
             </div>
             <div class="form-control" style="width: 50%;">
                 <span class="order-add-title text-warning">

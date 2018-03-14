@@ -120,26 +120,24 @@
                             <xsl:value-of select="../../fio_car"/> (<xsl:value-of select="../../car_number"/>)
                         </td>
                         <td class="hide-mobile"><xsl:value-of select="cost_route"/></td>
-                        <td class="hide-mobile">
-                            <xsl:if test="pay_type = 2">
-                                <xsl:attribute name="title">
-                                    <xsl:value-of select="cost_route"/> + <xsl:value-of select="cost_tovar"/>
-                                </xsl:attribute>
-                                <xsl:value-of select="(number(cost_route)+number(cost_tovar))"/>
-                            </xsl:if>
-                            <xsl:if test="pay_type = 3 or (pay_type = 1 and cost_tovar > 0)">
-                                <xsl:attribute name="title">
+                        <xsl:choose>
+                            <xsl:when test="pay_type = 2">
+                                <td title="({cost_route} + {cost_tovar})" class="hide-mobile">
+                                    <xsl:value-of select="(number(cost_route)+number(cost_tovar))"/>
+                                </td>
+                            </xsl:when>
+                            <xsl:when test="pay_type = 3 or (pay_type = 1 and cost_tovar > 0)">
+                                <td title="{cost_tovar}" class="hide-mobile">
                                     <xsl:value-of select="cost_tovar"/>
-                                </xsl:attribute>
-                                <xsl:value-of select="cost_tovar"/>
-                            </xsl:if>
-                            <xsl:if test="(pay_type = 1 and cost_tovar = 0)">
-                                <xsl:attribute name="title">
+                                </td>
+                            </xsl:when>
+                            <xsl:when test="(pay_type = 1 and cost_tovar = 0)">
+                                <td title="{cost_route}" class="hide-mobile">
                                     <xsl:value-of select="cost_route"/>
-                                </xsl:attribute>
-                                <xsl:value-of select="cost_route"/>
-                            </xsl:if>
-                        </td>
+                                </td>
+                            </xsl:when>
+                            <xsl:otherwise><td class="hide-mobile"><xsl:value-of select="cost_tovar"/></td></xsl:otherwise>
+                        </xsl:choose>
                         <td class="hide-mobile">
                             <xsl:value-of select="comment"/>
                         </td>

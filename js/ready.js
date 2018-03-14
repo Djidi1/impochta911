@@ -120,9 +120,11 @@ jQuery(function ($) {
 
     $('.js-store_address').change(function() {
         if ($(this).val() == 0){
-            $(this).closest('form').find('.hand_write').show();
+            $(this).closest('form').find('#checkbox_hand_write').click();
         }else{
             $(this).closest('form').find('.hand_write').hide();
+			$(this).closest('form').find('.hand_write').find('select,input,textarea').val('');
+			$(this).closest('form').find('.hand_write').find('input').attr('coord','');
         }
     });
 
