@@ -31,8 +31,8 @@ class ordersModel extends module_model {
 			if (isset($row['to_time_ready'])) $row['to_time_ready'] = substr($row['to_time_ready'],0,5);
 			if (isset($row['to_time_ready_end'])) $row['to_time_ready_end'] = substr($row['to_time_ready_end'],0,5);
             if (isset($row['date'])) $row['date'] = $this->dateToRuFormat($row['date']);
-            if (isset($row['from_phone'])) $row['from_phone'] = $this->formatPhoneNumber($row['from_phone']);
-            if (isset($row['to_phone'])) $row['to_phone'] = $this->formatPhoneNumber($row['to_phone']);
+//            if (isset($row['from_phone'])) $row['from_phone'] = $this->formatPhoneNumber($row['from_phone']);
+//            if (isset($row['to_phone'])) $row['to_phone'] = $this->formatPhoneNumber($row['to_phone']);
 //            if (isset($row['phone'])) $row['phone'] = $this->formatPhoneNumber($row['phone']).' - '.$row['phone'];
 			$items[] = $row;
 		}
