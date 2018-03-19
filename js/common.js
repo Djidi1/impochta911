@@ -127,6 +127,39 @@ function send_new_status(){
 
 }
 
+function getCoordsFromYandex(dest_point, obj, qc_geo){
+    var result = '';
+    $.get('https://geocode-maps.yandex.ru/1.x/?format=json&geocode='+dest_point, function(data){
+        var dest_coord = data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos;
+        if (typeof dest_coord !== 'undefined'){
+            var des_pos = dest_coord.split(' ');
+            result = des_pos[1] + ',' + des_pos[0];
+            $(obj).attr('coord', result);
+            $(obj).parent().find('.coord').val(result);
+        } else {
+            bad_coord_results(qc_geo);
+            console.log(data);
+        }
+    }).fail(function(data) {
+        bad_coord_results(qc_geo);
+        console.log(data.status);
+        // 429 - Превышен лимит в 25 000 запросов в сутки
+        if (data.status === 429) {
+            calc_route(recalc_cost, '')
+        }
+    });
+}
+
+function bad_coord_results(qc_geo) {
+    if (qc_geo == 5){
+        alert_note('Координаты не определены. Попробуйте указать ближайший адрес.');
+    } else if (qc_geo == 4){
+        alert_note('Координаты определены с точностью до города. Если необходим более точный расчет попробуйте указать ближайший адрес.');
+    } else if (qc_geo == 3){
+        alert_note('Координаты определены с точностью до населенного пункта. Если необходим более точный расчет попробуйте указать ближайший адрес.');
+    }
+}
+
 function autoc_spb_streets(){
     $(".spb-streets").each(function() {
         var $this = $(this);
@@ -146,12 +179,9 @@ function autoc_spb_streets(){
             }],
             /* Вызывается, когда пользователь выбирает одну из подсказок */
             onSelect: function (suggestion) {
-                if (suggestion.data.qc_geo == 5){
-                    alert_note('Координаты не определены. Попробуйте указать ближайший адрес.');
-                } else if (suggestion.data.qc_geo == 4){
-                    alert_note('Координаты определены с точностью до города. Если необходим более точный расчет попробуйте указать ближайший адрес.');
-                } else if (suggestion.data.qc_geo == 3){
-                    alert_note('Координаты определены с точностью до населенного пункта. Если необходим более точный расчет попробуйте указать ближайший адрес.');
+                if (suggestion.data.qc_geo >= 3) {
+                    // Если не точный адрес, то пробуем поискать в Яндексе
+                    getCoordsFromYandex(suggestion.value, this, suggestion.data.qc_geo);
                 }
                 $(this).attr('coord', suggestion.data.geo_lat + ',' + suggestion.data.geo_lon);
                 $(this).parent().find('.coord').val(suggestion.data.geo_lat + ',' + suggestion.data.geo_lon);
