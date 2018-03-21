@@ -467,8 +467,7 @@ class ordersModel extends module_model {
                   WHERE o.date BETWEEN \''.$this->dmy_to_mydate($from).'\' AND \''.$this->dmy_to_mydate($to).' 23:59:59\'
                   AND (o.id_user = \''.$user_id.'\' or \''.$user_id.'\' = 0)
                   and o.isBan = 0
-                ORDER BY o.date, r.to_time_ready, o.id desc
-                LIMIT 0,1000';
+                ORDER BY o.date, r.to_time_ready, o.id desc';
         $orders = $this->get_assoc_array($sql);
         $result_orders = array();
         foreach ($orders as $key => $order) {
@@ -532,7 +531,7 @@ class ordersModel extends module_model {
 			  LEFT JOIN users u ON u.id = o.id_user
                   WHERE o.date BETWEEN \''.$this->dmy_to_mydate($from).'\' AND \''.$this->dmy_to_mydate($to).' 23:59:59\'
                   AND (o.id_user = \''.$user_id.'\' or \''.$user_id.'\' = 0)
-                LIMIT 0,1000';
+                ';
 		$orders = $this->get_assoc_array($sql);
 		foreach ($orders as $key => $order) {
 			$route = $this->getRoutes($order['id']);
