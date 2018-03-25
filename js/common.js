@@ -6,7 +6,7 @@ function delete_div_row(obj) {
     var panel = $(row).parent();
     $(row).remove();
     var i = 0;
-    $(panel).find('.input-group').each(function(group){
+    $(panel).find('.input-group.routes-block').each(function(group){
         i++;
         $(this).attr('rel',i);
         $(this).find('.input-group-addon').text(i);
@@ -23,6 +23,7 @@ function clone_div_row(row) {
     $(new_el).find('.input-group-addon').text(class_id_new);
     // даем возможность удалиться созданному
     $(new_el).find('.btn-delete').removeAttr('disabled');
+    $(new_el).find('.btn-delete').parent().show();
     // автозаполение адреса
     $(new_el).remove('.typeahead');
     // чистим окна ввода

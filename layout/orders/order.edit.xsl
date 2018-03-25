@@ -189,7 +189,7 @@
                             <xsl:if test="$no_edit = 1">
                                 <div class="alert alert-warning" style="margin: 0 15px">
                                     Если вы хотетите отредактировать или отменить заказ свяжитесь, пожалуйста, с оператором по телефону:
-                                    <b>407-24-52</b>
+                                    <b><a href="tel:+7-812-242-80-81" style="color:#000;"><span class="city-code">(812)</span> 242-80-81</a></b>
                                 </div>
                             </xsl:if>
                             <xsl:if test="order/dk">
