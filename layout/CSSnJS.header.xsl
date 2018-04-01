@@ -43,7 +43,7 @@
                 <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyAnDrB-qO4i5uCua-4krGQsloWYJBRtgNU&libraries=places"></script>
                     ]]>
                 </xsl:text>
-            <script src="/js/gmap.js?v3.0.6"/>
+            <script src="/js/gmap.js?v3.0.7"/>
             <script>
                 $(function(){
                     if ($('#edit_content').length){CKEDITOR.replace( 'edit_content');}

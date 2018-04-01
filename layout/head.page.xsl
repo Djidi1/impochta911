@@ -93,7 +93,7 @@
 									<input id="mod-reg-phone" type="text" name="phone" class="form-control phone-number" maxlength="11" required=""/>
 								</p>
 								<p>
-									<label for="mod-reg-desc">Что панируете доставлять с нашей помощью</label>
+									<label for="mod-reg-desc">Что планируете доставлять с нашей помощью</label>
 									<input id="mod-reg-desc" type="text" name="desc" class="form-control" maxlength="11"  placeholder="Доставка почты, цветов, подарков, документов..."/>
 								</p>
 								<div class="wrapper">

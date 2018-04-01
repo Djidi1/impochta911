@@ -356,11 +356,22 @@ function calc_route(recalc_cost, dest_point) {
                     getDestCoordsFromYandex(recalc_cost, dest_point);
                 }else {
                     alert_note('Ошибка построения маршрута: ' + status);
+                    catchMapError(origin_point,destination_point_location,way_points);
                 }
             }
         });
     }
 }
+
+function catchMapError(origin_point,destination_point_location,way_points){
+    var test = {};
+    test['origin_point'] = origin_point;
+    test['destination_point_location'] = destination_point_location;
+    test['way_points'] = way_points;
+    var json = JSON.stringify(test);
+    $.post('/service/js_errors_catcher.php', {json: json});
+}
+
 function getAddMoney(obj, result_cost){
     var boxes = parseInt($(obj).find('input.goods_val').val());
     var cost_route = result_cost;
