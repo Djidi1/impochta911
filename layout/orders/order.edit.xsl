@@ -53,13 +53,18 @@
                             <div class="input-group" style="width:100%">
                                 <div class="form-control" style="width: 30%;">
                                     <span class="order-add-title text-info">Дата заказа</span>
-                                    <input class="date-picker order-route-data" type="text" name="date" onkeyup="check_user(this)" value="{order/date}" required="">
+                                    <input class="date-picker order-route-data order-date" type="text" name="date" value="{order/date}" required="">
                                         <xsl:if test="not(order/date)">
                                             <xsl:attribute name="value">
                                                 <xsl:value-of select="@today"/>
                                             </xsl:attribute>
                                         </xsl:if>
                                     </input>
+                                    <script>
+                                        $( ".order-date" ).on("dp.change change paste keyup", function() {
+                                            update_time_ready($('.to_time_ready').get())
+                                        });
+                                    </script>
                                 </div>
                                 <div class="form-control" style="width: 50%;">
                                     <span class="order-add-title text-info"><xsl:if test="order/id_address = 0">
