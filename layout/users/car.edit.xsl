@@ -38,6 +38,14 @@
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>E-mail:</td>
+                                        <td>
+                                            <input class="form-control" type="email" name="email" id="email"
+                                                   value="{car/email}" size="30">
+                                            </input>
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td>Телеграмм:</td>
                                         <td>
                                             <input class="form-control" type="text" name="telegram"

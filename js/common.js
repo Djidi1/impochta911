@@ -675,7 +675,7 @@ function test_time_routes_each(route_row){
     // Только для новых заказов
     if ($('#order_id').val() == '') {
         // Добавляем день, если заказ на текущей и время готовности меньше текушего
-        if (moment($date.val(), 'DD.MM.YYYY').isSame(Date.now(), 'day') && (tt_end - t_now) < 0) {
+        if (moment($date.val(), 'DD.MM.YYYY').isSame(Date.now(), 'day') && (tt_end - t_now) < -1) {
             $date.val(moment($date.val(), 'DD.MM.YYYY').add(1, 'days').format('L'));
         }
     }

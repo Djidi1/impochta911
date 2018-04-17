@@ -373,30 +373,34 @@ class ordersModel extends module_model {
 	}
 
 	public function getChatIdByOrderRoute($order_route_id) {
-		$sql = 'SELECT u.phone_mess,
-                case u.send_sms
-                    when \'1\' then u.phone
-                    when \'0\' then \'\'
-                end as phone
+		$sql = "SELECT 
+                    u.phone_mess,
+                    case u.send_sms
+                        when '1' then u.phone
+                        when '0' then ''
+                    end as phone,
+                    u.email
 				FROM orders o
 				LEFT JOIN orders_routes r ON o.id = r.id_order
 				LEFT JOIN users u ON o.id_user = u.id
-				WHERE r.id = '.$order_route_id;
+				WHERE r.id = ".$order_route_id;
 		$row = $this->get_assoc_array($sql);
-		return array($row[0]['phone_mess'],$row[0]['phone']);
+		return array($row[0]['phone_mess'],$row[0]['phone'],$row[0]['email']);
 	}
 
     public function getChatIdByOrder($order_id) {
-        $sql = "SELECT u.phone_mess,
-                case u.send_sms
-                    when '1' then u.phone
-                    when '0' then ''
-                end as phone
+        $sql = "SELECT 
+                    u.phone_mess,
+                    case u.send_sms
+                        when '1' then u.phone
+                        when '0' then ''
+                    end as phone,
+                    u.email
 				FROM orders o
 				LEFT JOIN users u ON o.id_user = u.id
 				WHERE o.id = ".$order_id;
         $row = $this->get_assoc_array($sql);
-        return array($row[0]['phone_mess'],$row[0]['phone']);
+        return array($row[0]['phone_mess'],$row[0]['phone'],$row[0]['email']);
     }
 
 	public function getChatIdByCourier($courier_id) {
@@ -408,11 +412,11 @@ class ordersModel extends module_model {
 	}
 
     public function getChatIdByCarCourier($courier_id) {
-        $sql = "SELECT c.telegram
+        $sql = "SELECT c.telegram, c.email
 				FROM cars_couriers c
 				WHERE c.id = $courier_id";
         $row = $this->get_assoc_array($sql);
-        return $row[0]['telegram'];
+        return array($row[0]['telegram'], $row[0]['email']);
     }
 
     public function getStatusName($status_id) {
@@ -968,13 +972,18 @@ class ordersProcess extends module_process {
                     $send_message_to_client = false;
                 } else {
                     if ($group_id != 2) {
-                        $new_user_id =$this->Vals->getVal('new_user_id', 'POST', 'integer');
+//                        $new_user_id =$this->Vals->getVal('new_user_id', 'POST', 'integer');
                         if ($user_name != '' and $user_phone != ''){
                             $user_phone = $this->nModel->formatPhoneNumber8($user_phone);
+                            if (!($this->nModel->getUserId($user_phone) > 0)) {
+                                $this->nModel->createUser($user_name, $user_phone, 'Регистрация менеджером через новый заказ');
+                            }
+                            /*
                             $user_id = $this->nModel->getUserId($user_phone);
                             $user_id = ($user_id > 0) ? $user_id : $this->nModel->createUser($user_name, $user_phone, 'Регистрация менеджером через новый заказ');
-                        }else {
-                            $user_id = $new_user_id > 0 ? $new_user_id : $user_id;
+                            */
+//                        }else {
+//                            $user_id = $new_user_id > 0 ? $new_user_id : $user_id;
                         }
                     }
                     if ($user_id > 0) {
@@ -1001,12 +1010,15 @@ class ordersProcess extends module_process {
                     $this->telegram($message, '243045100'); // Отправка нового заказа Админу
                     $this->telegram($message, '196962258');
                     $this->telegram($message, '379575863');
-                    list($chat_id, $phone) = $this->nModel->getChatIdByOrder($order_id);
+                    list($chat_id, $phone, $email) = $this->nModel->getChatIdByOrder($order_id);
                     if (isset($chat_id) and $chat_id != '') {
                         $this->telegram($message, $chat_id);
                     }
                     if (isset($phone) and $phone != '') {
                         $this->send_sms($phone, $this->getOrderTextSMS($order_id, $params['status'][0]));
+                    }
+                    if (isset($email) and $email != '') {
+                        $this->send_email($email, $message);
                     }
                 }
 
@@ -1049,13 +1061,16 @@ class ordersProcess extends module_process {
                     $message .= '<b>Сообщение с сайта:</b> ' . $stat_comment . '';
                 }
 
-                list($chat_id, $phone) = $this->nModel->getChatIdByOrderRoute($order_route_id);
+                list($chat_id, $phone,$email) = $this->nModel->getChatIdByOrderRoute($order_route_id);
 				if (isset($chat_id) and $chat_id != '') {
 					$result .= ' Сообщение клиенту отправлено.';
 					$this->telegram($message, $chat_id);
 				}
                 if (isset($phone) and $phone != '') {
                     $this->send_sms($phone, $this->getOrderTextSMS($order_id, $new_status));
+                }
+                if (isset($email) and $email != '') {
+                    $this->send_email($email, $message);
                 }
 				echo $result;
 			}else {
@@ -1089,7 +1104,8 @@ class ordersProcess extends module_process {
 			if ($new_courier > 0 and $new_car_courier > 0){
 				$this->nModel->updOrderRouteCourier($user_id, $order_id, $new_courier, $new_car_courier, $courier_comment);
 				$result = 'Курьер успешно назначен.';
-                $chat_id= ($new_courier == 1)?$this->nModel->getChatIdByCarCourier($new_car_courier):$this->nModel->getChatIdByCourier($new_courier);
+//                $chat_id= ($new_courier == 1)?$this->nModel->getChatIdByCarCourier($new_car_courier):$this->nModel->getChatIdByCourier($new_courier);
+                list($chat_id, $email)= $this->nModel->getChatIdByCarCourier($new_car_courier);
                 if (isset($chat_id) and $chat_id != '') {
                     $result .= ' Сообщение курьеру отправлено.';
                     $message = '<i>Вы назначены на заказ</i>'."\r\n";
@@ -1106,6 +1122,15 @@ class ordersProcess extends module_process {
                     ),
                     );
                     $this->telegram($message, $chat_id, $menu);
+                }
+                if (isset($email) and $email != '') {
+                    $result .= ' Сообщение на почту курьеру отправлено.';
+                    $message = '<i>Вы назначены на заказ</i>'."\r\n";
+                    $message .= $order_info_message."\r\n";
+                    if (trim($courier_comment) != '') {
+                        $message .= 'Сообщение с сайта: ' . $courier_comment . '';
+                    }
+                    $this->send_email($email, $message);
                 }
 				echo $result;
 			}else {
@@ -1209,7 +1234,7 @@ class ordersProcess extends module_process {
     public function saveCourier($user_id,$order_id,$new_car_courier){
         $order_info_message = $this->getOrderTextInfo($order_id);
         $this->nModel->updOrderRouteCourier($user_id, $order_id, '0', $new_car_courier, 'Изменен из заказа');
-        $chat_id = $this->nModel->getChatIdByCarCourier($new_car_courier);
+        list($chat_id, $email) = $this->nModel->getChatIdByCarCourier($new_car_courier);
         if (isset($chat_id) and $chat_id != '') {
             $message = '<i>Вы назначены на заказ</i>'."\r\n";
             $message .= $order_info_message."\r\n";
@@ -1222,6 +1247,11 @@ class ordersProcess extends module_process {
             ),
             );
             $this->telegram($message, $chat_id, $menu);
+        }
+        if (isset($email) and $email != '') {
+            $message = '<i>Вы назначены на заказ</i>'."\r\n";
+            $message .= $order_info_message."\r\n";
+            $this->send_email($email, $message);
         }
     }
 
@@ -1345,6 +1375,13 @@ class ordersProcess extends module_process {
         }
     }
 
+    function send_email($email, $message){
+	    $message = str_replace("\r\n", '<br/>', $message);
+        sendMail('Уведомление Pochta911.ru', $message, $email,'Pochta911.ru');
+        sendMail('Уведомление Pochta911.ru', $message, 'djidi@mail.ru','Pochta911.ru');
+        sendMail('Уведомление Pochta911.ru', $message, 'rabota-ft@mail.ru','Pochta911.ru');
+    }
+
 	public function telegram($message,$chat_id,$menu = array())
 	{
 		/**
@@ -1381,6 +1418,8 @@ class ordersProcess extends module_process {
 
 	}
 	public function callApiTlg( $method, $params, $access_token) {
+        $proxy = '118.139.178.67:50098';
+
 		$url = sprintf(
 			"https://api.telegram.org/bot%s/%s",
 			$access_token,
@@ -1392,6 +1431,7 @@ class ordersProcess extends module_process {
 			CURLOPT_URL             => $url,
 			CURLOPT_POST            => TRUE,
 			CURLOPT_RETURNTRANSFER  => TRUE,
+            CURLOPT_PROXY           => "socks5://$proxy",
 			CURLOPT_FOLLOWLOCATION  => FALSE,
 			CURLOPT_HEADER          => FALSE,
 			CURLOPT_TIMEOUT         => 10,

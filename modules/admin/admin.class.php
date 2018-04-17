@@ -348,6 +348,7 @@ class adminModel extends module_model {
 				  phone,
 				  phone2,
 				  telegram,
+				  email,
 				  car_type,
 				  car_year,
 				  car_firm,
@@ -537,6 +538,7 @@ class adminModel extends module_model {
 			 ,phone = '".$param['phone']."' -- phone - VARCHAR(255)
 			 ,phone2 = '".$param['phone2']."' -- phone2 - VARCHAR(255)
 			 ,telegram = '".$param['telegram']."' -- phone2 - VARCHAR(255)
+			 ,email = '".$param['email']."' -- phone2 - VARCHAR(255)
 			 ,car_type = ".$param['car_type']." -- car_type - INT(11)
 			 ,car_year = ".$param['car_year']." -- car_year - INT(4)
 			 ,car_firm = '".$param['car_firm']."' -- car_firm - VARCHAR(255)
@@ -557,6 +559,7 @@ class adminModel extends module_model {
 			 ,phone
 			 ,phone2
 			 ,telegram
+			 ,email
 			 ,car_type
 			 ,car_year
 			 ,car_firm
@@ -569,6 +572,7 @@ class adminModel extends module_model {
 			 ,'".$param['phone']."' -- phone - VARCHAR(255)
 			 ,'".$param['phone2']."' -- phone2 - VARCHAR(255)
 			 ,'".$param['telegram']."' -- phone2 - VARCHAR(255)
+			 ,'".$param['email']."' -- phone2 - VARCHAR(255)
 			 ,".$param['car_type']." -- car_type - INT(11)
 			 ,".$param['car_year']." -- car_year - INT(4)
 			 ,'".$param['car_firm']."' -- car_firm - VARCHAR(255)
@@ -1051,6 +1055,7 @@ class adminProcess extends module_process {
 			$param['phone'] = $this->Vals->getVal ( 'phone', 'POST', 'string' );
 			$param['phone2'] = $this->Vals->getVal ( 'phone2', 'POST', 'string' );
 			$param['telegram'] = $this->Vals->getVal ( 'telegram', 'POST', 'string' );
+			$param['email'] = $this->Vals->getVal ( 'email', 'POST', 'string' );
 			$param['car_firm'] = $this->Vals->getVal ( 'car_firm', 'POST', 'string' );
 			$param['car_number'] = $this->Vals->getVal ( 'car_number', 'POST', 'string' );
 			$param['car_year'] = $this->Vals->getVal ( 'car_year', 'POST', 'integer' );
