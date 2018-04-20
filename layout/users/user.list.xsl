@@ -112,7 +112,7 @@
 							<th>Контактное лицо</th>
 							<th>Компания</th>
                             <th>Логин</th>
-                            <th>Группа</th>
+                            <th>Заказов</th>
 							<th>Телефон</th>
 							<th>Телеграмм id</th>
 							<th>Почта</th>
@@ -140,7 +140,7 @@
                                         <xsl:value-of select="login"/>
                                     </td>
                                     <td>
-                                        <xsl:value-of select="group_name"/>
+                                        <xsl:value-of select="orders"/>
                                     </td>
 									<td>
 										<xsl:value-of select="phone"/>

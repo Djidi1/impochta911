@@ -1133,7 +1133,7 @@ class ordersProcess extends module_process {
                     if (trim($courier_comment) != '') {
                         $message .= 'Сообщение с сайта: ' . $courier_comment . '';
                     }
-                    $this->send_email($email, $message);
+                    $this->send_email($email, $message, 'Уведомление курьеру Pochta911.ru');
                 }
 				echo $result;
 			}else {
@@ -1254,7 +1254,7 @@ class ordersProcess extends module_process {
         if (isset($email) and $email != '') {
             $message = '<i>Вы назначены на заказ:</i>'."\r\n\r\n";
             $message .= $order_info_message."\r\n";
-            $this->send_email($email, $message);
+            $this->send_email($email, $message, 'Уведомление курьеру Pochta911.ru');
         }
     }
 
@@ -1378,11 +1378,11 @@ class ordersProcess extends module_process {
         }
     }
 
-    function send_email($email, $message){
+    function send_email($email, $message, $subject = 'Уведомление Pochta911.ru'){
 	    $message = str_replace("\r\n", '<br/>', $message);
-        sendMail('Уведомление Pochta911.ru', $message, $email,'Pochta911.ru');
-        sendMail('Уведомление Pochta911.ru', $message." <br> Отправлено на $email", 'djidi@mail.ru','Pochta911.ru');
-        sendMail('Уведомление Pochta911.ru', $message." <br> Отправлено на $email", 'rabota-ft@mail.ru','Pochta911.ru');
+        sendMail($subject, $message, $email,'Pochta911.ru');
+        sendMail($subject, $message." <br> Отправлено на $email", 'djidi@mail.ru','Pochta911.ru');
+        sendMail($subject, $message." <br> Отправлено на $email", 'rabota-ft@mail.ru','Pochta911.ru');
     }
 
 	public function telegram($message,$chat_id,$menu = array())

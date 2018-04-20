@@ -305,7 +305,9 @@ class adminModel extends module_model {
 		if (! $user_id){
             return false;
         }
-		$sql = "SELECT u.id as user_id, u.*,g.id as group_id, g.name as group_name
+		$sql = "SELECT u.id as user_id, u.*,
+                    g.id as group_id, 
+                    g.name as group_name
 				FROM `users` u
 				LEFT JOIN `groups_user` gu ON u.id = gu.user_id
 				LEFT JOIN `groups` g ON gu.group_id = g.id
@@ -327,7 +329,10 @@ class adminModel extends module_model {
         }
 
 
-		$sql = "SELECT u.id as user_id, u.*,g.id as group_id, g.name as group_name
+		$sql = "SELECT u.id as user_id, u.*,
+                    g.id as group_id, 
+                    g.name as group_name, 
+                    (SELECT count(o.id) FROM orders o WHERE o.id_user = u.id ) as orders
 				FROM `users` u
 				LEFT JOIN `groups_user` gu ON u.id = gu.user_id
 				LEFT JOIN `groups` g ON gu.group_id = g.id
