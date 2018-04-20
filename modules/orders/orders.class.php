@@ -294,7 +294,10 @@ class ordersModel extends module_model {
 					        WHEN o.id_address = 0 THEN o.from
 					        ELSE ua.address
 					    END) AS `from`,
-					   ua.comment from_comment,
+					   (CASE 
+					        WHEN o.id_address = 0 THEN o.from_comment
+					        ELSE ua.comment
+					    END) AS from_comment,
 					   o.from_fio, 
 					   o.from_phone,
                        u.inkass_proc,
@@ -972,7 +975,7 @@ class ordersProcess extends module_process {
                     $send_message_to_client = false;
                 } else {
                     if ($group_id != 2) {
-//                        $new_user_id =$this->Vals->getVal('new_user_id', 'POST', 'integer');
+                        $new_user_id =$this->Vals->getVal('new_user_id', 'POST', 'integer');
                         if ($user_name != '' and $user_phone != ''){
                             $user_phone = $this->nModel->formatPhoneNumber8($user_phone);
                             if (!($this->nModel->getUserId($user_phone) > 0)) {
@@ -983,8 +986,8 @@ class ordersProcess extends module_process {
                             $user_id = ($user_id > 0) ? $user_id : $this->nModel->createUser($user_name, $user_phone, 'Регистрация менеджером через новый заказ');
                             */
 //                        }else {
-//                            $user_id = $new_user_id > 0 ? $new_user_id : $user_id;
                         }
+                        $user_id = $new_user_id > 0 ? $new_user_id : $user_id;
                     }
                     if ($user_id > 0) {
                         $order_id = $this->nModel->orderInsert($user_id, $params);
@@ -1236,7 +1239,7 @@ class ordersProcess extends module_process {
         $this->nModel->updOrderRouteCourier($user_id, $order_id, '0', $new_car_courier, 'Изменен из заказа');
         list($chat_id, $email) = $this->nModel->getChatIdByCarCourier($new_car_courier);
         if (isset($chat_id) and $chat_id != '') {
-            $message = '<i>Вы назначены на заказ</i>'."\r\n";
+            $message = '<i>Вы назначены на заказ</i>'."\r\n\r\n";
             $message .= $order_info_message."\r\n";
             $menu = array('inline_keyboard' => array(
                 array(
@@ -1249,7 +1252,7 @@ class ordersProcess extends module_process {
             $this->telegram($message, $chat_id, $menu);
         }
         if (isset($email) and $email != '') {
-            $message = '<i>Вы назначены на заказ</i>'."\r\n";
+            $message = '<i>Вы назначены на заказ:</i>'."\r\n\r\n";
             $message .= $order_info_message."\r\n";
             $this->send_email($email, $message);
         }
@@ -1378,8 +1381,8 @@ class ordersProcess extends module_process {
     function send_email($email, $message){
 	    $message = str_replace("\r\n", '<br/>', $message);
         sendMail('Уведомление Pochta911.ru', $message, $email,'Pochta911.ru');
-        sendMail('Уведомление Pochta911.ru', $message, 'djidi@mail.ru','Pochta911.ru');
-        sendMail('Уведомление Pochta911.ru', $message, 'rabota-ft@mail.ru','Pochta911.ru');
+        sendMail('Уведомление Pochta911.ru', $message." <br> Отправлено на $email", 'djidi@mail.ru','Pochta911.ru');
+        sendMail('Уведомление Pochta911.ru', $message." <br> Отправлено на $email", 'rabota-ft@mail.ru','Pochta911.ru');
     }
 
 	public function telegram($message,$chat_id,$menu = array())
