@@ -31,7 +31,7 @@
             <script src="/js/bootstrap-notify.min.js"/>
             <script src="/js/camera.min.js"/>
             <script src="/js/ready.js?v3.0.6"/>
-            <script src="/js/common.js?v3.0.10"/>
+            <script src="/js/common.js?v3.0.11"/>
             <script src="/js/script.js?v3.0.6"/>
             <xsl:if test="//page[@name='pages']">
                 <script src="//cdn.ckeditor.com/4.6.1/full/ckeditor.js"/>

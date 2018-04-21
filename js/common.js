@@ -440,63 +440,68 @@ function round00(x){
 }
 // адская проверка времени
 function test_time_routes_add() {
-    $('.to_time').removeAttr('disabled');
-    $('div.routes-block').each(function (index) {
-        var next_route = $('div.routes-block').eq(index+1);
-        var this_ready = $(this).find('.to_time_ready').val();
-        var this_ready_end = $(this).find('.to_time_ready_end').val();
-        var this_to_time = $(this).find('.to_time').val();
-        var this_to_time_target = $(this).find('.to_time_target').val();
-        var next_to_time = $(next_route).find('.to_time').val();
-        var this_to_time_end = $(this).find('.to_time_end').val();
-        // var next_to_time_end = $(next_route).find('.to_time_end').val();
-        // Текущее время
-        var m = moment(new Date());
-        var time_now_string = m.hour() + ':' + round10(m.minute());
+    var time_edited = $('#time_edited').val();
+    var order_id = $('#order_id').val();
+    // Запускаем проверку только, если это новый заказ или если в нем было изменено время
+    if (order_id == 0 || time_edited == 1) {
+        $('.to_time').removeAttr('disabled');
+        $('div.routes-block').each(function (index) {
+            var next_route = $('div.routes-block').eq(index + 1);
+            var this_ready = $(this).find('.to_time_ready').val();
+            var this_ready_end = $(this).find('.to_time_ready_end').val();
+            var this_to_time = $(this).find('.to_time').val();
+            var this_to_time_target = $(this).find('.to_time_target').val();
+            var next_to_time = $(next_route).find('.to_time').val();
+            var this_to_time_end = $(this).find('.to_time_end').val();
+            // var next_to_time_end = $(next_route).find('.to_time_end').val();
+            // Текущее время
+            var m = moment(new Date());
+            var time_now_string = m.hour() + ':' + round10(m.minute());
 
-        // Если текущее время меньше времени готовности
-        if (TimeToFloat(this_ready) < TimeToFloat(time_now_string) && moment($('input[name=date]').val(), 'DD.MM.YYYY').isSame(Date.now(), 'day')) {
-            $(this).find('.to_time_ready').val(time_now_string);
-            alert_note('Время готовности не может быть меньше текущего времени.');
-        }
-        // Если время готовности ПО меньше времени готовности С
-        else if (this_ready_end != '-' && TimeToFloat(this_ready_end) < TimeToFloat(this_ready)) {
-            $(this).find('.to_time_ready_end').val(this_ready);
-            test_time_routes_add();
-        }
-        // Если время готовности меньше времени С
-        else if ( (TimeToFloat(this_ready) > TimeToFloat(this_to_time) ||
-                TimeToFloat(this_ready) > TimeToFloat(this_to_time_target))) {
-            $(this).find('.to_time').val(this_ready);
-            $(this).find('.to_time_target').val(this_ready);
-            test_time_routes_add();
-        }
-        // Если время С меньше времени ПО
-        else if (TimeToFloat(this_to_time) > TimeToFloat(this_to_time_end)) {
-            $(this).find('.to_time_end').val(this_to_time);
-            test_time_routes_add();
-        }
-
-        if (typeof next_to_time != 'undefined') {
-            // а. времня начало доставки следующего адреса, меньше или равно времени окончания доставки предыдущего.
-            if (TimeToFloat(next_to_time) > TimeToFloat(this_to_time_end)){
-                $(next_route).find('.to_time').val(this_to_time_end);
-                // блокируем возможность выбор другого времени
-                // disable_next($(next_route).find('.to_time'), this_to_time_end);
+            // Если текущее время меньше времени готовности
+            if (TimeToFloat(this_ready) < TimeToFloat(time_now_string) && moment($('input[name=date]').val(), 'DD.MM.YYYY').isSame(Date.now(), 'day')) {
+                $(this).find('.to_time_ready').val(time_now_string);
+                alert_note('Время готовности не может быть меньше текущего времени.');
             }
-            // б. Если от начала доставки первого адреса до конца доставки первого адреса более 60 минут , то программа внутри у себя подставляет что там промежуток в 60 минут, например (с 14,00 до 18,00 , программа в уме держит что там с 14,00 до 15,00)
-
-            // в. время начала следующего заказа , больше или равно времени начало предыдущего адреса но если больше то не более чем на 30 минут.
-            if ((TimeToFloat(next_to_time) < TimeToFloat(this_to_time))
-                || round00((TimeToFloat(next_to_time) - TimeToFloat(this_to_time)) > 0.5)){
-                $(next_route).find('.to_time').val(this_to_time);
+            // Если время готовности ПО меньше времени готовности С
+            else if (this_ready_end != '-' && TimeToFloat(this_ready_end) < TimeToFloat(this_ready)) {
+                $(this).find('.to_time_ready_end').val(this_ready);
+                test_time_routes_add();
             }
-            // console.log('this_to_time:' + this_to_time);
-            // console.log('this_to_time_end:' + this_to_time_end);
-            // console.log('next_to_time:' + next_to_time);
-            // console.log('next_to_time_end:' + next_to_time_end);
-        }
-    });
+            // Если время готовности меньше времени С
+            else if ((TimeToFloat(this_ready) > TimeToFloat(this_to_time) ||
+                    TimeToFloat(this_ready) > TimeToFloat(this_to_time_target))) {
+                $(this).find('.to_time').val(this_ready);
+                $(this).find('.to_time_target').val(this_ready);
+                test_time_routes_add();
+            }
+            // Если время С меньше времени ПО
+            else if (TimeToFloat(this_to_time) > TimeToFloat(this_to_time_end)) {
+                $(this).find('.to_time_end').val(this_to_time);
+                test_time_routes_add();
+            }
+
+            if (typeof next_to_time != 'undefined') {
+                // а. времня начало доставки следующего адреса, меньше или равно времени окончания доставки предыдущего.
+                if (TimeToFloat(next_to_time) > TimeToFloat(this_to_time_end)) {
+                    $(next_route).find('.to_time').val(this_to_time_end);
+                    // блокируем возможность выбор другого времени
+                    // disable_next($(next_route).find('.to_time'), this_to_time_end);
+                }
+                // б. Если от начала доставки первого адреса до конца доставки первого адреса более 60 минут , то программа внутри у себя подставляет что там промежуток в 60 минут, например (с 14,00 до 18,00 , программа в уме держит что там с 14,00 до 15,00)
+
+                // в. время начала следующего заказа , больше или равно времени начало предыдущего адреса но если больше то не более чем на 30 минут.
+                if ((TimeToFloat(next_to_time) < TimeToFloat(this_to_time))
+                    || round00((TimeToFloat(next_to_time) - TimeToFloat(this_to_time)) > 0.5)) {
+                    $(next_route).find('.to_time').val(this_to_time);
+                }
+                // console.log('this_to_time:' + this_to_time);
+                // console.log('this_to_time_end:' + this_to_time_end);
+                // console.log('next_to_time:' + next_to_time);
+                // console.log('next_to_time_end:' + next_to_time_end);
+            }
+        });
+    }
 }
 
 function test_time_routes(obj){
