@@ -71,13 +71,21 @@
                                     </tr>
                                     <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
                                         <tr>
-                                            <td>Уведомления:</td>
+                                            <td>Телеграм:</td>
                                             <td>
-                                                <input class="form-control" type="phone" name="phone_mess"
+                                                <input class="form-control" type="text" name="phone_mess"
                                                        value="{user/phone_mess}" size="30">
                                                     <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id != 1">
                                                         <xsl:attribute name="required">required</xsl:attribute>
                                                     </xsl:if>
+                                                </input>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Viber:</td>
+                                            <td>
+                                                <input class="form-control" type="text" name="viber_id"
+                                                       value="{user/viber_id}" size="30">
                                                 </input>
                                             </td>
                                         </tr>

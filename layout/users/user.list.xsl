@@ -115,6 +115,7 @@
                             <th>Заказов</th>
 							<th>Телефон</th>
 							<th>Телеграмм id</th>
+							<th>Viber id</th>
 							<th>Почта</th>
 							<th>Дата регистрации</th>
 							<xsl:if test="count(//page/@xls)=0">
@@ -147,6 +148,9 @@
                                     </td>
                                     <td>
                                         <xsl:value-of select="phone_mess"/>
+									</td>
+                                    <td>
+                                        <xsl:value-of select="viber_id"/>
 									</td>
 									<td>
 										<xsl:value-of select="email"/>

@@ -53,6 +53,13 @@
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>Viber:</td>
+                                        <td>
+                                            <input class="form-control" type="text" name="viber"
+                                                   value="{car/viber}" size="30" />
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td>Марка:</td>
                                         <td>
                                             <input class="form-control" type="phone" name="car_firm"

@@ -32,6 +32,8 @@
                         <th>№ [ID]</th>
                         <th>ФИО</th>
                         <th>Телефон</th>
+                        <th>Viber</th>
+                        <th>Email</th>
                         <th>Тип машины</th>
                         <th>Марка</th>
                         <th>Год</th>
@@ -50,7 +52,9 @@
                                 <xsl:value-of select="position()"/> [<xsl:value-of select="id"/>]
                             </td>
                             <td><xsl:value-of select="fio"/></td>
-                            <td><xsl:value-of select="phone"/> [<xsl:value-of select="phone2"/>]</td>
+                            <td><xsl:value-of select="phone"/> <xsl:if test="phone != phone2">/ <xsl:value-of select="phone2"/></xsl:if></td>
+                            <td><xsl:value-of select="viber"/></td>
+                            <td><xsl:value-of select="email"/></td>
                             <td><xsl:value-of select="car_type"/></td>
                             <td><xsl:value-of select="car_firm"/></td>
                             <td><xsl:value-of select="car_year"/></td>

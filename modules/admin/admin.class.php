@@ -68,7 +68,6 @@ class adminModel extends module_model {
     }
 
     public function loadTelegramUpdates(){
-
 	    $sql = "SELECT id, sender, chat_id, update_id, message_id, text, data, date, dk 
                 FROM log_telegram 
                 ORDER BY dk DESC 
@@ -79,14 +78,26 @@ class adminModel extends module_model {
         while ( ($row = $this->fetchRowA ()) !== false ) {
             $items [] = $row;
         }
-
         return $items;
+    }
 
+    public function loadViberUpdates(){
+	    $sql = "SELECT id, sender, chat_id, update_id, message_id, text, data, date, dk 
+                FROM log_viber
+                ORDER BY dk DESC 
+                LIMIT 0,200
+                ";
+        $this->query ( $sql );
+        $items = array ();
+        while ( ($row = $this->fetchRowA ()) !== false ) {
+            $items [] = $row;
+        }
+        return $items;
     }
 
 	public function userInsert($Params) {
 		$passi = md5 ( $Params ['pass'] );
-		$sql = 'INSERT INTO `users` (`name`,email,login,phone,phone_mess,title,isBan,inkass_proc,fixprice_inside,maxprice_inside,pay_type,pass,send_sms,date_reg,`desc`,work_times)
+		$sql = 'INSERT INTO `users` (`name`,email,login,phone,phone_mess,title,isBan,inkass_proc,fixprice_inside,maxprice_inside,pay_type,pass,send_sms,date_reg,`desc`,work_times,viber_id)
 				VALUES (
 				    \'%1$s\',
 				    \'%2$s\',
@@ -103,13 +114,14 @@ class adminModel extends module_model {
 				    \'%12$u\',
 				    NOW(),
 				    \'%13$s\',
-				    \'%14$s\'
+				    \'%14$s\',
+				    \'%15$s\'
 				    )';
 
 		$test = $this->query ( $sql, $Params ['username'], $Params ['email'], $Params ['login'], $Params ['phone'],
 			$Params ['phone_mess'], $Params ['title'], $Params ['isBan'], $Params ['inkass_proc'],
             $Params ['fixprice_inside'], $Params ['maxprice_inside'], $Params ['pay_type'], $Params ['send_sms'],
-            $Params ['desc'], $Params ['work_times'] );
+            $Params ['desc'], $Params ['work_times'], $Params ['viber_id'] );
 
 //        stop($this->sql);
 		$user_id = $this->insertID();
@@ -139,15 +151,16 @@ class adminModel extends module_model {
 				    pay_type = \'%11$u\',
 				    send_sms = \'%12$u\',
 				    `desc` = \'%13$s\',
-				    work_times = \'%14$s\'
+				    work_times = \'%14$s\',
+				    viber_id = \'%15$s\'
 				    ';
         $sql .= ($Params ['pass'] != '') ? ' ,pass = \''.md5 ( $Params ['pass'] ).'\', psw_chgd = 0 ' : '';
 
-		$sql .= ' WHERE `id` = %15$u';
+		$sql .= ' WHERE `id` = %16$u';
 		$test = $this->query ( $sql, $Params ['username'], $Params ['email'], $Params ['login'], $Params ['phone'],
             $Params ['phone_mess'], $Params ['title'], $Params ['isBan'], $Params ['inkass_proc'],
             $Params ['fixprice_inside'],$Params ['maxprice_inside'],$Params ['pay_type'], $Params ['send_sms'],
-            $Params ['desc'], $Params ['work_times'], $Params ['user_id'] );
+            $Params ['desc'], $Params ['work_times'], $Params ['viber_id'], $Params ['user_id'] );
 
 //        stop($this->sql);
 
@@ -159,30 +172,32 @@ class adminModel extends module_model {
 		return $test;
 	}
 
-	public function updateAddrAndCard($Params, $type_user){
+    public function updateAddrAndCard($Params, $type_user){
         $sql_arr = array();
         $upd_ids = array();
         $now_adress = $this->getAddress($Params ['user_id']);
-        foreach ($Params['addr_id'] as $key => $a_id) {
-            if (array_key_exists($a_id, $now_adress)) {
-                $upd_ids[] = $a_id;
-                // Обновляем, адреса которые были
-                $sql_arr[] = "UPDATE users_address SET comment='".$Params['addr_comment'][$key]."', address='".$Params['address'][$key]."' WHERE id = $a_id";
-            }
-            if ($a_id == ''){
-                // Добавляем новые адреса
-                $sql_arr[] = 'INSERT INTO users_address (address,comment,user_id) VALUES (\''.$Params['address'][$key].'\',\''.$Params ['addr_comment'][$key].'\','.$Params ['user_id'].')';
+        if (isset($Params['addr_id'])) {
+            foreach ($Params['addr_id'] as $key => $a_id) {
+                if (array_key_exists($a_id, $now_adress)) {
+                    $upd_ids[] = $a_id;
+                    // Обновляем, адреса которые были
+                    $sql_arr[] = "UPDATE users_address SET comment='" . $Params['addr_comment'][$key] . "', address='" . $Params['address'][$key] . "' WHERE id = $a_id";
+                }
+                if ($a_id == '') {
+                    // Добавляем новые адреса
+                    $sql_arr[] = 'INSERT INTO users_address (address,comment,user_id) VALUES (\'' . $Params['address'][$key] . '\',\'' . $Params ['addr_comment'][$key] . '\',' . $Params ['user_id'] . ')';
+                }
             }
         }
-        foreach ($now_adress as $key => $val){
+        foreach ($now_adress as $key => $val) {
             if (!in_array($key, $upd_ids)) {
                 // Удаляем адреса, которых нет в обновлении
                 $sql_arr[] = "DELETE FROM users_address WHERE id = $key";
             }
         }
 
-        foreach ($sql_arr as $sql){
-            $this->query ( $sql );
+        foreach ($sql_arr as $sql) {
+            $this->query($sql);
         }
 
 
@@ -354,6 +369,7 @@ class adminModel extends module_model {
 				  phone2,
 				  telegram,
 				  email,
+				  viber,
 				  car_type,
 				  car_year,
 				  car_firm,
@@ -385,6 +401,9 @@ class adminModel extends module_model {
 				  fio,
 				  phone,
 				  phone2,
+				  telegram,
+				  email,
+				  viber,
 				  ct.car_type,
 				  car_year,
 				  car_firm,
@@ -543,6 +562,7 @@ class adminModel extends module_model {
 			 ,phone = '".$param['phone']."' -- phone - VARCHAR(255)
 			 ,phone2 = '".$param['phone2']."' -- phone2 - VARCHAR(255)
 			 ,telegram = '".$param['telegram']."' -- phone2 - VARCHAR(255)
+			 ,viber = '".$param['viber']."' -- phone2 - VARCHAR(255)
 			 ,email = '".$param['email']."' -- phone2 - VARCHAR(255)
 			 ,car_type = ".$param['car_type']." -- car_type - INT(11)
 			 ,car_year = ".$param['car_year']." -- car_year - INT(4)
@@ -565,6 +585,7 @@ class adminModel extends module_model {
 			 ,phone2
 			 ,telegram
 			 ,email
+			 ,viber
 			 ,car_type
 			 ,car_year
 			 ,car_firm
@@ -578,6 +599,7 @@ class adminModel extends module_model {
 			 ,'".$param['phone2']."' -- phone2 - VARCHAR(255)
 			 ,'".$param['telegram']."' -- phone2 - VARCHAR(255)
 			 ,'".$param['email']."' -- phone2 - VARCHAR(255)
+			 ,'".$param['viber']."' -- phone2 - VARCHAR(255)
 			 ,".$param['car_type']." -- car_type - INT(11)
 			 ,".$param['car_year']." -- car_year - INT(4)
 			 ,'".$param['car_firm']."' -- car_firm - VARCHAR(255)
@@ -847,6 +869,7 @@ class adminProcess extends module_process {
 		$this->regAction ( 'goods_price_list', 'Настройка стоимости за перевозку товаров', ACTION_GROUP );
 //		$this->regAction ( 'mails', 'Рассылка писем', ACTION_GROUP );
 		$this->regAction ( 'getTelegramUpdates', 'Обновления телеграмма', ACTION_GROUP );
+		$this->regAction ( 'getViberUpdates', 'Обновления Viber', ACTION_GROUP );
 		if (DEBUG == 0) {
 			$this->registerActions ( 1 );
 		}
@@ -944,6 +967,7 @@ class adminProcess extends module_process {
 			$Params ['login'] = $this->Vals->getVal ( 'login', 'POST', 'string' );
 			$Params ['phone'] = $this->Vals->getVal ( 'phone', 'POST', 'string' );
 			$Params ['phone_mess'] = $this->Vals->getVal ( 'phone_mess', 'POST', 'string' );
+			$Params ['viber_id'] = $this->Vals->getVal ( 'viber_id', 'POST', 'string' );
 			$Params ['pass'] = $this->Vals->getVal ( 'pass', 'POST', 'string' );
 			$Params ['group_id'] = $this->Vals->getVal ( 'group_id', 'POST', 'integer' );
 			$Params ['pay_type'] = $this->Vals->getVal ( 'pay_type', 'POST', 'integer' );
@@ -1061,6 +1085,7 @@ class adminProcess extends module_process {
 			$param['phone2'] = $this->Vals->getVal ( 'phone2', 'POST', 'string' );
 			$param['telegram'] = $this->Vals->getVal ( 'telegram', 'POST', 'string' );
 			$param['email'] = $this->Vals->getVal ( 'email', 'POST', 'string' );
+			$param['viber'] = $this->Vals->getVal ( 'viber', 'POST', 'string' );
 			$param['car_firm'] = $this->Vals->getVal ( 'car_firm', 'POST', 'string' );
 			$param['car_number'] = $this->Vals->getVal ( 'car_number', 'POST', 'string' );
 			$param['car_year'] = $this->Vals->getVal ( 'car_year', 'POST', 'integer' );
@@ -1247,29 +1272,15 @@ class adminProcess extends module_process {
 
 		if ($action == 'getTelegramUpdates') {
 			$users = $this->nModel->userList();
-//			$response =  $this->callApiTlg('getUpdates', array(), TLG_TOKEN);
-//			$items = array();
-//			foreach ($response->result as $data){
-//                if (isset($data->message)) {
-//                    $from = $data->message->from;
-//                    $chat = $data->message->chat;
-//                    $date = $data->message->date;
-//                    $text = $data->message->text;
-//
-//                    $row['user_name'] = $from->first_name . " " .
-//                        (isset($from->last_name) ? $from->last_name : '') .
-//                        (isset($from->username) ? " [" . $from->username . "]" : '');
-//                    $row['chat_id'] = $chat->id;
-//                    $row['update_id'] = $data->update_id;
-//                    $row['message_id'] = $data->message->message_id;
-//                    $row['date'] = date('d.m.Y H:i', $date);
-//                    $row['text'] = $text;
-//                    $items[] = $row;
-//                }
-//			}
-//			$this->nModel->saveTelegramUpdates ($items);
             $items = $this->nModel->loadTelegramUpdates ();
 			$this->nView->viewTelegramUpdates ( $items, $users );
+			$this->updated = true;
+		}
+
+		if ($action == 'getViberUpdates') {
+			$users = $this->nModel->userList();
+            $items = $this->nModel->loadViberUpdates ();
+			$this->nView->viewViberUpdates ( $items, $users );
 			$this->updated = true;
 		}
 		
@@ -1593,6 +1604,19 @@ class adminView extends module_view {
 
 	public function viewTelegramUpdates($items,$users) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/admin/telegram.logs.xsl';
+		$Container = $this->newContainer ( 'messages' );
+		foreach ( $items as $aArray ) {
+			$this->arrToXML($aArray, $Container, 'item');
+		}
+		$Containerusers = $this->addToNode ( $Container, 'users', '' );
+		foreach ( $users as $user ) {
+			$this->arrToXML ( $user, $Containerusers, 'user' );
+		}
+		return true;
+	}
+
+	public function viewViberUpdates($items,$users) {
+		$this->pXSL [] = RIVC_ROOT . 'layout/admin/viber.logs.xsl';
 		$Container = $this->newContainer ( 'messages' );
 		foreach ( $items as $aArray ) {
 			$this->arrToXML($aArray, $Container, 'item');

@@ -382,13 +382,14 @@ class ordersModel extends module_model {
                         when '1' then u.phone
                         when '0' then ''
                     end as phone,
-                    u.email
+                    u.email,
+                    u.viber_id
 				FROM orders o
 				LEFT JOIN orders_routes r ON o.id = r.id_order
 				LEFT JOIN users u ON o.id_user = u.id
 				WHERE r.id = ".$order_route_id;
 		$row = $this->get_assoc_array($sql);
-		return array($row[0]['phone_mess'],$row[0]['phone'],$row[0]['email']);
+		return array($row[0]['phone_mess'],$row[0]['phone'],$row[0]['email'],$row[0]['viber_id']);
 	}
 
     public function getChatIdByOrder($order_id) {
@@ -398,12 +399,13 @@ class ordersModel extends module_model {
                         when '1' then u.phone
                         when '0' then ''
                     end as phone,
-                    u.email
+                    u.email,
+                    u.viber_id
 				FROM orders o
 				LEFT JOIN users u ON o.id_user = u.id
 				WHERE o.id = ".$order_id;
         $row = $this->get_assoc_array($sql);
-        return array($row[0]['phone_mess'],$row[0]['phone'],$row[0]['email']);
+        return array($row[0]['phone_mess'],$row[0]['phone'],$row[0]['email'],$row[0]['viber_id']);
     }
 
 	public function getChatIdByCourier($courier_id) {
@@ -415,11 +417,11 @@ class ordersModel extends module_model {
 	}
 
     public function getChatIdByCarCourier($courier_id) {
-        $sql = "SELECT c.telegram, c.email
+        $sql = "SELECT c.telegram, c.email, c.viber
 				FROM cars_couriers c
 				WHERE c.id = $courier_id";
         $row = $this->get_assoc_array($sql);
-        return array($row[0]['telegram'], $row[0]['email']);
+        return array($row[0]['telegram'], $row[0]['email'], $row[0]['viber']);
     }
 
     public function getStatusName($status_id) {
@@ -1010,12 +1012,20 @@ class ordersProcess extends module_process {
                 if ($send_message_to_client and !$dontsend_message and isset($order_id)) {
                     $message = $this->getOrderTextInfo($order_id);
                     $message .= $message_add_text;
+
                     $this->telegram($message, '243045100'); // Отправка нового заказа Админу
                     $this->telegram($message, '196962258');
                     $this->telegram($message, '379575863');
-                    list($chat_id, $phone, $email) = $this->nModel->getChatIdByOrder($order_id);
+
+                    $this->viber($message, 'df+c6B5JkuIet0qr9uTnrg==');
+
+
+                    list($chat_id, $phone, $email, $viber) = $this->nModel->getChatIdByOrder($order_id);
                     if (isset($chat_id) and $chat_id != '') {
                         $this->telegram($message, $chat_id);
+                    }
+                    if (isset($viber) and $viber != '') {
+                        $this->viber($message, $viber);
                     }
                     if (isset($phone) and $phone != '') {
                         $this->send_sms($phone, $this->getOrderTextSMS($order_id, $params['status'][0]));
@@ -1064,11 +1074,15 @@ class ordersProcess extends module_process {
                     $message .= '<b>Сообщение с сайта:</b> ' . $stat_comment . '';
                 }
 
-                list($chat_id, $phone,$email) = $this->nModel->getChatIdByOrderRoute($order_route_id);
-				if (isset($chat_id) and $chat_id != '') {
-					$result .= ' Сообщение клиенту отправлено.';
-					$this->telegram($message, $chat_id);
-				}
+                list($chat_id, $phone, $email, $viber) = $this->nModel->getChatIdByOrderRoute($order_route_id);
+                if (isset($chat_id) and $chat_id != '') {
+                    $result .= ' Сообщение в Телеграм клиенту отправлено.';
+                    $this->telegram($message, $chat_id);
+                }
+                if (isset($viber) and $viber != '') {
+                    $result .= ' Сообщение в Viber клиенту отправлено.';
+                    $this->viber($message, $viber);
+                }
                 if (isset($phone) and $phone != '') {
                     $this->send_sms($phone, $this->getOrderTextSMS($order_id, $new_status));
                 }
@@ -1108,7 +1122,7 @@ class ordersProcess extends module_process {
 				$this->nModel->updOrderRouteCourier($user_id, $order_id, $new_courier, $new_car_courier, $courier_comment);
 				$result = 'Курьер успешно назначен.';
 //                $chat_id= ($new_courier == 1)?$this->nModel->getChatIdByCarCourier($new_car_courier):$this->nModel->getChatIdByCourier($new_courier);
-                list($chat_id, $email)= $this->nModel->getChatIdByCarCourier($new_car_courier);
+                list($chat_id, $email, $viber)= $this->nModel->getChatIdByCarCourier($new_car_courier);
                 if (isset($chat_id) and $chat_id != '') {
                     $result .= ' Сообщение курьеру отправлено.';
                     $message = '<i>Вы назначены на заказ</i>'."\r\n";
@@ -1134,6 +1148,15 @@ class ordersProcess extends module_process {
                         $message .= 'Сообщение с сайта: ' . $courier_comment . '';
                     }
                     $this->send_email($email, $message, 'Уведомление курьеру Pochta911.ru');
+                }
+                if (isset($viber) and $viber != '') {
+                    $result .= ' Сообщение в Viber курьеру отправлено.';
+                    $message = '<i>Вы назначены на заказ</i>'."\r\n";
+                    $message .= $order_info_message."\r\n";
+                    if (trim($courier_comment) != '') {
+                        $message .= 'Сообщение с сайта: ' . $courier_comment . '';
+                    }
+                    $this->viber($message, $viber, $order_id);
                 }
 				echo $result;
 			}else {
@@ -1237,7 +1260,7 @@ class ordersProcess extends module_process {
     public function saveCourier($user_id,$order_id,$new_car_courier){
         $order_info_message = $this->getOrderTextInfo($order_id);
         $this->nModel->updOrderRouteCourier($user_id, $order_id, '0', $new_car_courier, 'Изменен из заказа');
-        list($chat_id, $email) = $this->nModel->getChatIdByCarCourier($new_car_courier);
+        list($chat_id, $email, $viber) = $this->nModel->getChatIdByCarCourier($new_car_courier);
         if (isset($chat_id) and $chat_id != '') {
             $message = '<i>Вы назначены на заказ</i>'."\r\n\r\n";
             $message .= $order_info_message."\r\n";
@@ -1255,6 +1278,11 @@ class ordersProcess extends module_process {
             $message = '<i>Вы назначены на заказ:</i>'."\r\n\r\n";
             $message .= $order_info_message."\r\n";
             $this->send_email($email, $message, 'Уведомление курьеру Pochta911.ru');
+        }
+        if (isset($viber) and $viber != '') {
+            $message = '<i>Вы назначены на заказ</i>'."\r\n";
+            $message .= $order_info_message."\r\n";
+            $this->viber($message, $viber, $order_id);
         }
     }
 
@@ -1421,6 +1449,7 @@ class ordersProcess extends module_process {
 
 	}
 	public function callApiTlg( $method, $params, $access_token) {
+	    return true;
         $proxy = '118.139.178.67:50098';
 
 		$url = sprintf(
@@ -1441,6 +1470,63 @@ class ordersProcess extends module_process {
 			CURLOPT_HTTPHEADER      => array( 'Accept-Language: ru,en-us'),
 			CURLOPT_POSTFIELDS      => $params,
 			CURLOPT_SSL_VERIFYPEER  => FALSE,
+		));
+
+		$response = curl_exec($ch);
+		return json_decode($response);
+	}
+
+    public function viber($message, $chat_id, $order_id = 0){
+        $message = str_replace("\r\n", "\r", $message);
+        $message = json_encode(strip_tags($message));
+	    if ($order_id > 0) {
+            $params = /** @lang JSON */
+                '{
+               "receiver":"' . $chat_id . '",
+               "type":"text",
+               "text":' . $message . ',
+               "keyboard":{
+                  "Type":"keyboard",
+                  "Buttons":[
+                     {
+                        "Text": "<b>Принять заказ</b>",
+                        "TextSize": "large",
+                        "TextHAlign": "center",
+                        "TextVAlign": "middle",
+                        "ActionType": "reply",
+                        "ActionBody": "/order_accepted_' . $order_id . '",
+                        "BgColor": "#03a9f4"
+                     }
+                  ]
+               }
+            }';
+        }else{
+            $params = /** @lang JSON */
+                '{
+               "receiver":"' . $chat_id . '",
+               "type":"text",
+               "text":' . $message . '
+               }';
+        }
+
+        $this->callApiViber( $params );
+    }
+
+	public function callApiViber( $params ) {
+        $token = '47b928585c67d483-163c35967b6305ec-f92d670f8a72e53d';
+        $api_url = 'https://chatapi.viber.com/pa/send_message';
+
+		$ch = curl_init();
+		curl_setopt_array( $ch, array(
+            CURLOPT_URL             => $api_url,
+            CURLOPT_POST            => TRUE,
+            CURLOPT_RETURNTRANSFER  => TRUE,
+            CURLOPT_FOLLOWLOCATION  => FALSE,
+            CURLOPT_HEADER          => FALSE,
+            CURLOPT_TIMEOUT         => 10,
+            CURLOPT_HTTPHEADER      => array( 'Accept-Language: ru,en-us',"Content-Type:application/json","X-Viber-Auth-Token:$token"),
+            CURLOPT_POSTFIELDS      => $params,
+            CURLOPT_SSL_VERIFYPEER  => FALSE
 		));
 
 		$response = curl_exec($ch);

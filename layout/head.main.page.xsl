@@ -144,6 +144,11 @@
                             </a>
                         </li>
                         <li>
+                            <a class="btn btn-default btn-xs" href="/admin/getViberUpdates-1/">
+                                <i class="fa fa-phone" aria-hidden="true"> </i> Viber
+                            </a>
+                        </li>
+                        <li>
                             <a class="btn btn-default btn-xs" href="/admin/price_routes-1/">
                                 <i class="fa fa-money" aria-hidden="true"> </i> Стоимость
                             </a>
