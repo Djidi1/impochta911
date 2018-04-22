@@ -1018,6 +1018,7 @@ class ordersProcess extends module_process {
                     $this->telegram($message, '379575863');
 
                     $this->viber($message, 'df+c6B5JkuIet0qr9uTnrg==');
+                    $this->viber($message, 'QxA+XapnH/sgMDfOki5emA==');
 
 
                     list($chat_id, $phone, $email, $viber) = $this->nModel->getChatIdByOrder($order_id);
