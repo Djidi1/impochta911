@@ -55,6 +55,11 @@
                                 <xsl:text> </xsl:text>
                                 <span>Телеграмм</span>
                             </a>
+                            <a class="btn btn-default" href="/admin/getViberUpdates-1/">
+                                <i class="fa fa-phone" aria-hidden="true"> </i>
+                                <xsl:text> </xsl:text>
+                                <span>Viber</span>
+                            </a>
                             <a class="btn btn-default" href="/admin/userList-1/">
                                 <span class="glyphicon glyphicon-user"> </span>
                                 <xsl:text> </xsl:text>
@@ -72,9 +77,55 @@
                             </a>
                         </td>
                     </tr>
+                    <tr>
+                        <td valign="top">
+                            <h2>Отчет</h2>
+                            <form method="post" style="margin-bottom: 2px;" action="/admin/getReport-1/">
+                                <div class="row">
+                                    <div class="col-xs-9">
+                                        <xsl:call-template name="datepickers"/>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <input class="btn btn-success" type="submit" value="Выгрузить"/>
+                                    </div>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
             <!--<xsl:call-template name="linkback"/>-->
         </div>
+    </xsl:template>
+    <xsl:template name="datepickers">
+        <div class="input-daterange input-group" id="datepicker">
+            <input type="text" class="form-control" id="start_date" name="date_from" value="{@date_from}" />
+            <span class="input-group-addon">to</span>
+            <input type="text" class="form-control" id="end_date" name="date_to" value="{@date_to}" />
+        </div>
+        <script type="text/javascript">
+            $(function () {
+            var date = new Date();
+            var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+            var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+            $('#start_date').datetimepicker({format: 'L', locale: 'ru', defaultDate: firstDay,});
+            $('#end_date').datetimepicker({format: 'L', locale: 'ru', useCurrent: false, defaultDate: lastDay});
+            /*
+            $("#start_date_excel").on("dp.change", function (e) {
+            $('#end_date_excel').data("DateTimePicker").minDate(e.date);
+            });
+            $("#end_date_excel").on("dp.change", function (e) {
+            $('#start_date_excel').data("DateTimePicker").maxDate(e.date);
+            });
+            $("#start_date_excel").on("dp.show", function (e) {
+            $('#start_date_excel').data("DateTimePicker").maxDate(e.date);
+            });
+            $("#end_date_excel").on("dp.show", function (e) {
+            $('#end_date_excel').data("DateTimePicker").minDate(e.date);
+            });
+            */
+            });
+        </script>
     </xsl:template>
 </xsl:stylesheet>

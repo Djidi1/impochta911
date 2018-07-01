@@ -67,6 +67,141 @@ class adminModel extends module_model {
 
     }
 
+    public function exportToExcel($titles, $items){
+        require_once CORE_ROOT . 'classes/PHPExcel.php';
+        $objPHPExcel = new PHPExcel();
+
+        $style = array(
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                'wrap' => true
+            ),
+            'font'  => array(
+                'bold'  => true,
+                'color' => array('rgb' => '333333'),
+                'size'  => 10,
+                'name'  => 'Verdana'
+            )
+        );
+        $objPHPExcel->setActiveSheetIndex(0);
+// Записываем заголовки со второй строки
+        $colCount = 'A';
+        foreach ($titles as $col_value) {
+            $cell = $colCount.'1';
+            $objPHPExcel->getActiveSheet()->SetCellValue($cell, $col_value);
+            $objPHPExcel->getActiveSheet()->getStyle($colCount."1")->applyFromArray($style);
+            $objPHPExcel->getActiveSheet()->getColumnDimension($colCount)->setAutoSize(true);
+            $colCount++;
+        }
+//        $objPHPExcel->getActiveSheet()->getStyle("A1:".$colCount."1")->applyFromArray($style);
+// Записываем данные со второй строки
+        $rowCount = 2;
+        foreach($items as $item){
+            $colCount = 'A';
+            foreach ($item as $col_value) {
+                $cell = $colCount.$rowCount;
+                $objPHPExcel->getActiveSheet()->SetCellValue($cell, $col_value);
+//                $objPHPExcel->getActiveSheet()->getColumnDimension($colCount)->setAutoSize(true);
+                $colCount++;
+            }
+            $rowCount++;
+        }
+        $objPHPExcel->getActiveSheet()->setCellValue("D$rowCount", "=SUM(D2:D".($rowCount-1).")");
+        $objPHPExcel->getActiveSheet()->setCellValue("E$rowCount", "=SUM(E2:E".($rowCount-1).")");
+        $objPHPExcel->getActiveSheet()->setCellValue("F$rowCount", "=SUM(F2:F".($rowCount-1).")");
+        $objPHPExcel->getActiveSheet()->setCellValue("G$rowCount", "=SUM(G2:G".($rowCount-1).")");
+        $objPHPExcel->getActiveSheet()->setCellValue("H$rowCount", "=SUM(H2:H".($rowCount-1).")");
+        $objPHPExcel->getActiveSheet()->setCellValue("I$rowCount", "=SUM(I2:I".($rowCount-1).")");
+        $objPHPExcel->getActiveSheet()->getStyle("D".$rowCount)->applyFromArray($style);
+        $objPHPExcel->getActiveSheet()->getStyle("E".$rowCount)->applyFromArray($style);
+        $objPHPExcel->getActiveSheet()->getStyle("F".$rowCount)->applyFromArray($style);
+        $objPHPExcel->getActiveSheet()->getStyle("G".$rowCount)->applyFromArray($style);
+        $objPHPExcel->getActiveSheet()->getStyle("H".$rowCount)->applyFromArray($style);
+        $objPHPExcel->getActiveSheet()->getStyle("I".$rowCount)->applyFromArray($style);
+        $colCount--;
+        $rowCount--;
+        $objPHPExcel->getActiveSheet()->setAutoFilter('A1:'.$colCount.$rowCount);
+        $objPHPExcel->getActiveSheet()->freezePane('A2');
+
+        $file_name = 'report_orders'.date('_Y_m_d').'.xlsx';
+// Instantiate a Writer to create an OfficeOpenXML Excel .xlsx file
+//        $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+// Write the Excel file to filename some_excel_file.xlsx in the current directory
+//        $objWriter->save('orders'.date('_Y_m_d').'.xlsx');
+        // Redirect output to a client’s web browser (Excel2007)
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="'.$file_name.'"');
+        header('Cache-Control: max-age=0');
+// If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+
+// If you're serving to IE over SSL, then the following may be needed
+        header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+        header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header ('Pragma: public'); // HTTP/1.0
+
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->setPreCalculateFormulas(true);
+        $objWriter->save('php://output');
+        exit;
+    }
+    function dmy_to_mydate($date) {
+        return date ( 'Y-m-d', strtotime (  $date ) );
+    }
+    public function getMainReport($from, $to){
+	    $sql = "
+SELECT 
+  a.id,
+  a.title,
+  -- a.name,
+  CASE
+    WHEN a.category > 1 THEN 'A'
+    WHEN a.category IS NULL AND a.count_orders > 0 THEN 'A'
+    WHEN a.category > 0.33 THEN 'B'
+    WHEN a.category > 0 THEN 'C'
+    ELSE 'D'
+  END AS cat_value,
+--  a.category,
+  a.count_orders,
+  a.dost,
+  (a.dost - a.cour) AS comp_money,
+  a.inkass,
+  (a.inkass * a.inkass_proc / 100) AS inkas_money,
+  (a.dost - a.cour) + (a.inkass * a.inkass_proc / 100) AS sum_money,
+--  a.inkass_proc,
+  a.max_date,
+  a.date_reg
+  FROM (
+    SELECT 
+      u.id,
+      u.title, 
+      u.name,
+      u.date_reg,
+      (COUNT(o.id) / datediff(NOW(), u.date_reg)) AS category,
+      COUNT(o.id) AS count_orders,
+      MAX(o.date) AS max_date,
+      SUM(r.cost_route) AS dost,
+      SUM(r.cost_car) AS cour,
+      SUM(r.cost_tovar) AS inkass,
+      u.inkass_proc  
+    FROM users u
+      LEFT JOIN groups_user gu ON u.id = gu.user_id
+      LEFT JOIN orders o ON o.id_user = u.id
+      LEFT JOIN orders_routes r ON r.id_order = o.id
+    WHERE gu.group_id = 2 AND u.isban = 0  AND (r.id_status = 4 OR r.id_status IS NULL)
+    AND o.date BETWEEN '".$this->dmy_to_mydate($from)."' AND '".$this->dmy_to_mydate($to)." 23:59:59'
+      GROUP BY u.title, u.name
+  ) a
+                ";
+        $this->query ( $sql );
+        $items = array ();
+        while ( ($row = $this->fetchRowA ()) !== false ) {
+            $items [] = $row;
+        }
+        return $items;
+    }
+
     public function loadTelegramUpdates(){
 	    $sql = "SELECT id, sender, chat_id, update_id, message_id, text, data, date, dk 
                 FROM log_telegram 
@@ -870,6 +1005,7 @@ class adminProcess extends module_process {
 //		$this->regAction ( 'mails', 'Рассылка писем', ACTION_GROUP );
 		$this->regAction ( 'getTelegramUpdates', 'Обновления телеграмма', ACTION_GROUP );
 		$this->regAction ( 'getViberUpdates', 'Обновления Viber', ACTION_GROUP );
+		$this->regAction ( 'getReport', 'Отчет', ACTION_GROUP );
 		if (DEBUG == 0) {
 			$this->registerActions ( 1 );
 		}
@@ -911,6 +1047,14 @@ class adminProcess extends module_process {
         }
 
         $this->User->nView->viewLoginParams ( 'FD', '', $user_id, array (), array (), $this->User->getRightModule ( 'admin' ) );
+
+        if ($action == 'getReport') {
+            list($from, $to) = $this->get_post_date('all');
+            $items = $this->nModel->getMainReport($from, $to);
+            $titles = array('ID', 'Компания', 'Категория', 'Количество доставок', 'Стоимость доставок', 'Заработок компании', 'Суммы по инкассации', 'Заработок с инкассации', 'Сумма', 'Дата последнего заказа', 'Дата регистрации');
+            $this->nModel->exportToExcel($titles, $items);
+            stop($items);
+        }
 		
 		if ($action == 'newUser') {
 			$groups = $this->nModel->getGroups ();
@@ -997,7 +1141,8 @@ class adminProcess extends module_process {
 				$msg = 'обновлен';
 			}
 			if ($res) {
-				$this->nView->viewMessage ( 'Профиль успешно '.$msg.'.  Вернуться в <a href="/admin/userEdit-'.$Params ['user_id'].'/">профиль</a>.<script>window.setTimeout(function(){window.location.href = "/admin/userList-1/idg-2/";}, 5000);</script>', 'Сообщение' );
+			    $profile_url = '/admin/userEdit-'.$Params ['user_id'].'/';
+				$this->nView->viewMessage ( 'Профиль успешно '.$msg.'.  Вернуться в <a href="'.$profile_url.'">профиль</a>.<script>window.setTimeout(function(){window.location.href = "/admin/userList-1/idg-2/";}, 5000);</script>', 'Сообщение' );
 				$message2 = ' Профиль клиента успешно '.$msg.'<br />' . rn . rn;
 				$usInfo = '';
 				foreach ( $Params as $key => $val ) {
@@ -1347,6 +1492,29 @@ class adminProcess extends module_process {
 		}
 		return json_decode($response);
 	}
+
+    public function get_post_date($type = 'to'){
+        if ($type == 'all') {
+            $from = $this->Vals->getVal ( 'date_from', 'POST', 'string' );
+        }
+        $to = $this->Vals->getVal ( 'date_to', 'POST', 'string' );
+        if ($type == 'to') {
+            $from = $to;
+        }
+        if ($to == '') {
+            if ($type == 'all') {
+                $from = (isset($_SESSION['date_from']) and $_SESSION['date_from'] != '') ? $_SESSION['date_from'] : date('01.m.Y');
+            }
+            $to = (isset($_SESSION['date_to']) and $_SESSION['date_to'] != '') ? $_SESSION['date_to'] : date('d.m.Y');
+            if ($type == 'to') {
+                $from = $to;
+            }
+        }else{
+            $_SESSION['date_from'] = (isset($from))?$from:$to;
+            $_SESSION['date_to'] = $to;
+        }
+        return array((isset($from))?$from:$to,$to);
+    }
 
 }
 

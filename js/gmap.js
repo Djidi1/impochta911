@@ -111,7 +111,7 @@ function calc_route(recalc_cost, dest_point) {
     $('.spb-streets').each(function () {
         var coord = $(this).attr('coord');
         // Для старых заказов - без координат
-        if (coord != '') {
+        if (coord != '' && coord != 'null,null') {
             way_points.push({
                 location: strToLatLngComma(coord),
                 stopover: true
@@ -368,6 +368,15 @@ function catchMapError(origin_point,destination_point_location,way_points){
     test['origin_point'] = origin_point;
     test['destination_point_location'] = destination_point_location;
     test['way_points'] = way_points;
+
+    // Дополняем данными о пользователе
+    var attrs = {};
+    var $node = $('BODY').get(0);
+    $.each( $node.attributes, function ( index, attribute ) {
+        attrs[attribute.name] = attribute.value;
+    });
+    test['body'] = attrs;
+
     var json = JSON.stringify(test);
     $.post('/service/js_errors_catcher.php', {json: json});
 }

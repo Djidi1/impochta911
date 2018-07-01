@@ -776,13 +776,8 @@ function TimeToFloat(time){
 
 function timestampToTime(){
     var unix_timestamp = $('#time_now').val();
-    var date = new Date(unix_timestamp*1000);
-    var hours = date.getHours();
-    var minutes = "0" + date.getMinutes();
-    var seconds = "0" + date.getSeconds();
-    var his = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
-    $('span.his_time_now').html(his);
-    return hours + ':' + minutes.substr(-2);
+    $('span.his_time_now').html(moment.unix(unix_timestamp).format("HH:mm:ss"));
+    return moment.unix(unix_timestamp).format("HH:mm");
 }
 
 function add_data_table(obj, type){

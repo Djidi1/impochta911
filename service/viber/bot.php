@@ -45,7 +45,7 @@ $bot
             if (isset($matches[1])){
                 $connect = mysqli_connect(DB_HOST, DB_USER, DB_PASS);
                 mysqli_select_db($connect,DB_DATABASE);
-                $sql = "UPDATE orders SET car_accept = '$chat->id' WHERE id = '".$matches[1][0]."'";
+                $sql = "UPDATE orders SET car_accept = '$chat' WHERE id = '".$matches[1][0]."'";
                 mysqli_query($connect, $sql);
                 $bot->getClient()->sendMessage(
                     (new \Viber\Api\Message\Text())

@@ -1019,6 +1019,7 @@ class ordersProcess extends module_process {
 
                     $this->viber($message, 'df+c6B5JkuIet0qr9uTnrg==');
                     $this->viber($message, 'QxA+XapnH/sgMDfOki5emA==');
+                    $this->viber($message, '8fZTnZ52qp+odd7YUtMdVg==');
 
 
                     list($chat_id, $phone, $email, $viber) = $this->nModel->getChatIdByOrder($order_id);
@@ -1290,11 +1291,11 @@ class ordersProcess extends module_process {
 	public function getOrderTextInfo($order_id){
         $order_info = $this->nModel->getOrderInfo($order_id);
         $order_routes_info = $this->nModel->getOrderRoutesInfo($order_id);
-        $order_info_message = "<b>Заказ №</b> " . $order_id . "\r\n";
-        $order_info_message .= "<b>Дата заказа:</b> " . $order_info['date'] . "\r\n";
-        $order_info_message .= "<b>Откуда:</b> " . $order_info['from'] . "\r\n";
+        $order_info_message = "<b>Заказ </b> " . $order_id . "\r\n";
+        $order_info_message .= "<b>Дата:</b>\r\n " . $order_info['date'] . "\r\n";
+        $order_info_message .= "<b>Откуда:</b>\r\n " . $order_info['from'] . "\r\n";
         if (trim($order_info['from_phone']) != '') {
-            $order_info_message .= "<b>Отправитель:</b> " . $order_info['from_fio'] . " [" . $order_info['from_phone'] . "]\r\n";
+            $order_info_message .= "<b>Отправитель:</b>\r\n " . $order_info['from_fio'] . " [" . $order_info['from_phone'] . "]\r\n";
         }
         $order_info_message .= ($order_info['from_comment'] != '')?"<i>" . $order_info['from_comment'] . "</i>\r\n\r\n":'';
         $i = 0;
@@ -1304,22 +1305,22 @@ class ordersProcess extends module_process {
                 $order_info_message .= "<b>Участок № $i:</b>\r\n";
             }
 
-            $order_info_message .= " <b>Адрес доставки:</b> " . $order_route_info['to_addr'] . "\r\n";
+            $order_info_message .= "<b>Адрес доставки:</b>\r\n " . $order_route_info['to_addr'] . "\r\n";
             $order_info_message .= ($order_route_info['comment'] != '')?" <b>Комментарий:</b> " . $order_route_info['comment'] . "\r\n":"";
-            $order_info_message .= " <b>Период забора:</b> " . $order_route_info['to_time_ready'] . " - " . $order_route_info['to_time_ready_end'] . "\r\n";
-            $order_info_message .= " <b>Период получения:</b> " . $order_route_info['to_time'] . " - " . $order_route_info['to_time_end'] . "\r\n";
-            $order_info_message .= " <b>Получатель:</b> " . $order_route_info['to_fio'] . " [" . $order_route_info['to_phone'] . "]\r\n";
+            $order_info_message .= "<b>Период забора:</b>\r\n " . $order_route_info['to_time_ready'] . " - " . $order_route_info['to_time_ready_end'] . "\r\n";
+            $order_info_message .= "<b>Период получения:</b>\r\n " . $order_route_info['to_time'] . " - " . $order_route_info['to_time_end'] . "\r\n";
+            $order_info_message .= "<b>Получатель:</b>\r\n " . $order_route_info['to_fio'] . " [" . $order_route_info['to_phone'] . "]\r\n";
 	        if ($order_route_info['pay_type'] == 1) {
-		        $order_info_message .= " <b>Взять в магазине:</b> " . ($order_route_info['cost_route']) . " руб.\r\n";
+		        $order_info_message .= "<b>Взять в магазине:</b>\r\n " . ($order_route_info['cost_route']) . " руб.\r\n";
 	        }elseif ($order_route_info['pay_type'] == 2) {
-		        $order_info_message .= " <b>Наличные у клиента:</b> " . ($order_route_info['cost_route'] + $order_route_info['cost_tovar']) . " руб.\r\n";
+		        $order_info_message .= "<b>Наличные у клиента:</b>\r\n " . ($order_route_info['cost_route'] + $order_route_info['cost_tovar']) . " руб.\r\n";
 	        }elseif ($order_route_info['pay_type'] == 3 or $order_route_info['pay_type'] == 4 ) {
-		        $order_info_message .= " <b>Наличные у клиента:</b> " . $order_route_info['cost_tovar'] . " руб. \r\n";
+		        $order_info_message .= "<b>Наличные у клиента:</b>\r\n " . $order_route_info['cost_tovar'] . " руб. \r\n";
 	        }
             if ($order_route_info['id_status'] == 4) {
-                $order_info_message .= " <b>Ваш заказ доставлен получателю</b>\r\n";
+                $order_info_message .= "<b>Ваш заказ доставлен получателю</b>\r\n";
             }elseif ($order_route_info['id_status'] > 1) {
-                $order_info_message .= " <b>Статус:</b> " . $order_route_info['status'] . "\r\n";
+                $order_info_message .= "<b>Статус:</b>\r\n " . $order_route_info['status'] . "\r\n";
             }
 //            $order_info_message .= " <b>Стоимость заказа:</b> " . (+$order_route_info['cost_route'] + $order_route_info['cost_tovar']) . "\r\n ";
         }

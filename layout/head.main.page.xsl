@@ -123,6 +123,13 @@
             <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
                 <div class="moduletable">
                     <ul class="bottom-menu navbar-nav">
+
+                        <li>
+                            <a class="btn btn-default btn-xs" href="/admin/">
+                                <span class="glyphicon glyphicon-briefcase"> </span> Админ
+                            </a>
+                        </li>
+                        <!--
                         <li>
                             <a class="btn btn-default btn-xs" href="/pages/">
                                 <span class="glyphicon glyphicon-file"> </span> Страницы
@@ -148,6 +155,7 @@
                                 <i class="fa fa-phone" aria-hidden="true"> </i> Viber
                             </a>
                         </li>
+                        -->
                         <li>
                             <a class="btn btn-default btn-xs" href="/admin/price_routes-1/">
                                 <i class="fa fa-money" aria-hidden="true"> </i> Стоимость
