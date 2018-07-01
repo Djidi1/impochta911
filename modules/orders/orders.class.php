@@ -1515,6 +1515,7 @@ class ordersProcess extends module_process {
     }
 
 	public function callApiViber( $params ) {
+ /*
         $token = '47b928585c67d483-163c35967b6305ec-f92d670f8a72e53d';
         $api_url = 'https://chatapi.viber.com/pa/send_message';
 
@@ -1533,6 +1534,7 @@ class ordersProcess extends module_process {
 
 		$response = curl_exec($ch);
 		return json_decode($response);
+*/
 	}
 	
 }
